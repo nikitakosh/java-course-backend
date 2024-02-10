@@ -30,6 +30,7 @@ public class ListCommandTest {
         message = Mockito.mock(Message.class);
         chat = Mockito.mock(Chat.class);
     }
+
     @Test
     public void notRegisteredUser() {
         Mockito.when(update.message()).thenReturn(message);
@@ -69,9 +70,9 @@ public class ListCommandTest {
         Assertions.assertEquals(
                 listCommand.handle(update).getParameters().get("text"),
                 """
-                Tracked Links:\s
-                www.example1.com
-                www.example2.com"""
+                        Tracked Links:\s
+                        www.example1.com
+                        www.example2.com"""
         );
     }
 

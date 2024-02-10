@@ -3,7 +3,6 @@ package commands;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.commands.TrackCommand;
 import edu.java.bot.commands.UntrackCommand;
 import edu.java.bot.models.Link;
 import edu.java.bot.models.User;
@@ -55,7 +54,6 @@ public class UntrackCommandTest {
                 "Please, enter the link you want to unfollow"
         );
     }
-
 
 
     @Test

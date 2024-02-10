@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.commands.HelpCommand;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,14 +23,14 @@ public class HelpCommandTest {
         Assertions.assertEquals(
                 helpCommand.handle(update).getParameters().get("text"),
                 """
-                   *Доступные команды:*
-                   
-                   /start - Зарегистрировать пользователя. \s
-                   /help - Вывести список команд. \s
-                   /track - Начать отслеживание ссылки. \s
-                   /untrack - Прекратить отслеживание ссылки. \s
-                   /list - Показать список отслеживаемых ссылок.
-                   """
+                        *Доступные команды:*
+                                           
+                        /start - Зарегистрировать пользователя. \s
+                        /help - Вывести список команд. \s
+                        /track - Начать отслеживание ссылки. \s
+                        /untrack - Прекратить отслеживание ссылки. \s
+                        /list - Показать список отслеживаемых ссылок.
+                        """
         );
     }
 
