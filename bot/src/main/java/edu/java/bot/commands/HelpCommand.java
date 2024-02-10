@@ -23,14 +23,14 @@ public class HelpCommand implements Command {
         return new SendMessage(
                 update.message().chat().id(),
                 """
-                   *Доступные команды:*
-                   
-                   /start - Зарегистрировать пользователя. \s
-                   /help - Вывести список команд. \s
-                   /track - Начать отслеживание ссылки. \s
-                   /untrack - Прекратить отслеживание ссылки. \s
-                   /list - Показать список отслеживаемых ссылок.
-                   """
-                ).parseMode(ParseMode.Markdown);
+                        *Доступные команды:*
+                                           
+                        /start - Зарегистрировать пользователя. \s
+                        /help - Вывести список команд. \s
+                        /track - Начать отслеживание ссылки. \s
+                        /untrack - Прекратить отслеживание ссылки. \s
+                        /list - Показать список отслеживаемых ссылок.
+                        """
+        ).parseMode(ParseMode.Markdown);
     }
 }

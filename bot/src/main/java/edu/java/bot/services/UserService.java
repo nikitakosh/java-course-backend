@@ -2,13 +2,11 @@ package edu.java.bot.services;
 
 import edu.java.bot.models.Link;
 import edu.java.bot.models.User;
-import edu.java.bot.models.UserState;
 import edu.java.bot.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -17,6 +15,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final LinkService linkService;
+
     @Transactional(readOnly = true)
     public Optional<User> findByChatId(Long chatId) {
         return userRepository.findByChatID(chatId);
@@ -33,6 +32,7 @@ public class UserService {
     public void save(User user) {
         userRepository.save(user);
     }
+
     @Transactional
     public void trackLink(User user, Link link) {
         user.getLinks().add(link);
@@ -40,7 +40,6 @@ public class UserService {
         save(user);
         linkService.save(link);
     }
-
 
 
 }

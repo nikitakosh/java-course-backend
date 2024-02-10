@@ -8,7 +8,9 @@ import java.util.Objects;
 
 public interface Command {
     String command();
+
     String description();
+
     SendMessage handle(Update update);
 
     default boolean supports(Update update) {

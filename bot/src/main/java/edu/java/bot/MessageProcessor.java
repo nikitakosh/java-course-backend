@@ -12,13 +12,14 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class MessageProcessor implements UserMessageProcessor{
+public class MessageProcessor implements UserMessageProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessor.class);
     private final HelpCommand helpCommand;
     private final ListCommand listCommand;
     private final StartCommand startCommand;
     private final TrackCommand trackCommand;
     private final UntrackCommand untrackCommand;
+
     @Override
     public List<? extends Command> commands() {
         return List.of(

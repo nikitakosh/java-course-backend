@@ -20,6 +20,7 @@ public class UntrackCommand implements Command {
 
     private final UserService userService;
     private final LinkService linkService;
+
     @Override
     public String command() {
         return "/untrack";

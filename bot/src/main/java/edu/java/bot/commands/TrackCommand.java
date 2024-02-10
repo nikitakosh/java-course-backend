@@ -16,9 +16,10 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class TrackCommand implements Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrackCommand.class);
     private final UserService userService;
     private final LinkService linkService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrackCommand.class);
+
     @Override
     public String command() {
         return "/track";

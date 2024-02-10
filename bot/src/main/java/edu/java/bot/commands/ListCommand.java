@@ -5,7 +5,6 @@ import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.Command;
 import edu.java.bot.models.Link;
 import edu.java.bot.models.User;
-import edu.java.bot.services.LinkService;
 import edu.java.bot.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
