@@ -2,29 +2,27 @@ package edu.java.bot;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.BaseRequest;
+import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.BaseResponse;
+import edu.java.bot.commands.Command;
 import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.messageProcessors.UserMessageProcessor;
+import jakarta.annotation.PreDestroy;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class ChangeTrackerBot implements Bot {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChangeTrackerBot.class);
+
     private final ApplicationConfig config;
     private final UserMessageProcessor messageProcessor;
+    private final List<Command> commands;
     private TelegramBot bot;
-
-    @Autowired
-    public ChangeTrackerBot(ApplicationConfig config, UserMessageProcessor messageProcessor) {
-        this.config = config;
-        this.messageProcessor = messageProcessor;
-    }
 
 
     @Override
@@ -40,13 +38,19 @@ public class ChangeTrackerBot implements Bot {
 
     @Override
     public void start() {
+        SetMyCommands setMyCommands = new SetMyCommands(
+                commands.stream().map(Command::toApiCommand).toArray(BotCommand[]::new)
+        );
         bot = new TelegramBot(config.telegramToken());
+        bot.execute(setMyCommands);
         bot.setUpdatesListener(this);
     }
 
     @Override
+    @PreDestroy
     public void close() {
         bot.removeGetUpdatesListener();
+        bot.shutdown();
     }
 
 }
