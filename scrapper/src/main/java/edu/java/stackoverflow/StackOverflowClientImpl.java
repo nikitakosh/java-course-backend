@@ -1,18 +1,22 @@
 package edu.java.stackoverflow;
 
 import java.util.Objects;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j
 public class StackOverflowClientImpl implements StackOverflowClient {
 
+    public static final String BASE_URL = "https://api.stackexchange.com";
     private final WebClient webClient;
-    @Setter
-    public String baseUrl = "https://api.stackexchange.com";
 
     public StackOverflowClientImpl(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder
+                .baseUrl(BASE_URL)
+                .build();
+    }
+
+    public StackOverflowClientImpl(WebClient.Builder webClientBuilder, String baseUrl) {
         this.webClient = webClientBuilder
                 .baseUrl(baseUrl)
                 .build();

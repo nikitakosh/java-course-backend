@@ -1,14 +1,12 @@
 package edu.java.scrapper.clients;
 
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import edu.java.github.GitHubClient;
-import edu.java.github.GitHubClientImpl;
-import edu.java.github.RepoResponse;
+import edu.java.stackoverflow.ItemResponse;
+import edu.java.stackoverflow.StackOverflowClientImpl;
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -19,14 +17,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootTest
-public class GitHubClientTest {
-
-
+public class StackOverflowClientTest {
     private static WireMockServer wireMockServer;
     private final WebClient.Builder webClientBuilder;
 
     @Autowired
-    public GitHubClientTest(WebClient.Builder webClientBuilder) {
+    public StackOverflowClientTest(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
 
@@ -42,23 +38,24 @@ public class GitHubClientTest {
     }
 
     @Test
-    public void fetchRepo() {
-        GitHubClient gitHubClient = new GitHubClientImpl(webClientBuilder, "http://localhost:8080");
-        String owner = "nikitakosh";
-        String repo = "TinkJavaCourse";
-        stubFor(get(urlPathMatching(String.format("/repos/%s/%s", owner, repo)))
+    public void fetchQuestion() {
+        StackOverflowClientImpl stackOverflowClient = new StackOverflowClientImpl(webClientBuilder, "http://localhost:8080");
+        String id = "214741";
+        stubFor(get(urlPathMatching(String.format("/questions/%s", id)))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json; charset=utf-8")
                         .withBody("""
-                                {
-                                    "id": 703168142,
-                                    "full_name": "nikitakosh/TinkJavaCourse",
-                                    "updated_at": "2023-10-10T18:13:07Z"
+                                {   "items" :
+                                        [
+                                            {
+                                                "title" : "What is a StackOverflowError?",
+                                                "last_activity_date" : 1680213422
+                                            }
+                                        ]
                                 }
                                 """)));
-        RepoResponse repoResponse = gitHubClient.fetchRepo(owner, repo);
-        Assertions.assertEquals("703168142", repoResponse.id());
-        Assertions.assertEquals("nikitakosh/TinkJavaCourse", repoResponse.fullName());
-        Assertions.assertEquals(OffsetDateTime.parse("2023-10-10T18:13:07Z"), repoResponse.updatedAt());
+        ItemResponse itemResponse = stackOverflowClient.fetchQuestion(id);
+        Assertions.assertEquals("What is a StackOverflowError?", itemResponse.title());
+        Assertions.assertEquals(OffsetDateTime.parse("2023-03-30T21:57:02Z"), itemResponse.lastActivityDate());
     }
 }
