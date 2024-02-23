@@ -3,7 +3,9 @@ app:
     enable: true
     interval: 10s
     force-check-delay: 10s
-
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 spring:
   application:
     name: scrapper
