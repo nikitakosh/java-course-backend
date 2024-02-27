@@ -16,15 +16,19 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class HelpCommandTest {
 
-    private final List<Command> commands;
+    @Mock
+    private ListCommand listCommand;
+    @Mock
+    private StartCommand startCommand;
+    @Mock
+    private TrackCommand trackCommand;
+    @Mock
+    private UntrackCommand untrackCommand;
     @Mock
     private UserService userService;
     @Mock
@@ -33,11 +37,6 @@ public class HelpCommandTest {
     private Message message;
     @Mock
     private Chat chat;
-
-    @Autowired
-    public HelpCommandTest(List<Command> commands) {
-        this.commands = commands;
-    }
 
 
     @Test
@@ -48,8 +47,15 @@ public class HelpCommandTest {
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(chat.id()).thenReturn(1L);
-
-        HelpCommand helpCommand = new HelpCommand(userService, commands);
+        Mockito.when(listCommand.command()).thenReturn("/list");
+        Mockito.when(listCommand.description()).thenReturn("show list of tracked links");
+        Mockito.when(startCommand.command()).thenReturn("/start");
+        Mockito.when(startCommand.description()).thenReturn("register a user");
+        Mockito.when(trackCommand.command()).thenReturn("/track");
+        Mockito.when(trackCommand.description()).thenReturn("start tracking link");
+        Mockito.when(untrackCommand.command()).thenReturn("/untrack");
+        Mockito.when(untrackCommand.description()).thenReturn("stop tracking link");
+        HelpCommand helpCommand = new HelpCommand(userService, List.of(listCommand, startCommand, trackCommand, untrackCommand));
         Assertions.assertEquals(
                 helpCommand.handle(update).getParameters().get("text"),
                 """
@@ -64,7 +70,7 @@ public class HelpCommandTest {
 
     @Test
     public void commandAndDescription() {
-        HelpCommand helpCommand = new HelpCommand(userService, commands);
+        HelpCommand helpCommand = new HelpCommand(userService, List.of(listCommand, startCommand, trackCommand, untrackCommand));
         Assertions.assertEquals(
                 helpCommand.command(),
                 "/help"
