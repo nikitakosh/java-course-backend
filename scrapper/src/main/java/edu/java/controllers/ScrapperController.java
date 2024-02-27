@@ -41,7 +41,10 @@ public class ScrapperController {
     }
 
     @DeleteMapping("/links")
-    public LinkResponse deleteLink(@RequestHeader("Tg-Chat-Id") Integer tgChatId, @RequestBody RemoveLinkRequest removeLinkRequest) {
+    public LinkResponse deleteLink(
+            @RequestHeader("Tg-Chat-Id") Integer tgChatId,
+            @RequestBody RemoveLinkRequest removeLinkRequest
+    ) {
         log.info("ссылка успешна удалена");
         return null;
     }

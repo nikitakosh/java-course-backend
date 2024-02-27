@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionController {
 
+    public static final String ERROR_DESCRIPTION = "Некорректные параметры запроса";
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler()
     public ApiErrorResponse handleNotExistentChatException(NotExistentChatException ex) {
@@ -42,7 +44,7 @@ public class ExceptionController {
     public ApiErrorResponse handleFieldException(MethodArgumentNotValidException ex) {
 
         return new ApiErrorResponse(
-                "Некорректные параметры запроса",
+                ERROR_DESCRIPTION,
                 ex.getStatusCode().toString(),
                 ex.getTitleMessageCode(),
                 ex.getMessage(),
@@ -55,7 +57,7 @@ public class ExceptionController {
     public ApiErrorResponse handleEmptyRequestBodyException(HttpMessageNotReadableException ex) {
 
         return new ApiErrorResponse(
-                "Некорректные параметры запроса",
+                ERROR_DESCRIPTION,
                 HttpStatus.BAD_REQUEST.toString(),
                 ex.toString(),
                 ex.getMessage(),

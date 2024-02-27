@@ -8,6 +8,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 public class ScrapperClientImpl implements ScrapperClient {
     public static final String BASE_URL = "http://localhost:8080";
+    public static final String TG_CHAT_ID_HEADER = "Tg-Chat-Id";
+    public static final String SCRAPPER_API_V_1_0_LINKS = "scrapper-api/v1.0/links";
+    public static final String SCRAPPER_API_V_1_0_TG_CHAT_ID = "scrapper-api/v1.0/tg-chat/{id}";
     private final WebClient webClient;
 
     public ScrapperClientImpl(WebClient.Builder webClientBuilder) {
@@ -22,7 +25,7 @@ public class ScrapperClientImpl implements ScrapperClient {
     @Override
     public void registerChat(Integer tgChatId) {
         webClient.post()
-                .uri("scrapper-api/v1.0/tg-chat/{id}", tgChatId)
+                .uri(SCRAPPER_API_V_1_0_TG_CHAT_ID, tgChatId)
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
@@ -31,7 +34,7 @@ public class ScrapperClientImpl implements ScrapperClient {
     @Override
     public void deleteChat(Integer tgChatId) {
         webClient.delete()
-                .uri("scrapper-api/v1.0/tg-chat/{id}", tgChatId)
+                .uri(SCRAPPER_API_V_1_0_TG_CHAT_ID, tgChatId)
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
@@ -40,8 +43,8 @@ public class ScrapperClientImpl implements ScrapperClient {
     @Override
     public ListLinksResponse getLinks(Integer tgChatId) {
         return webClient.get()
-                .uri("scrapper-api/v1.0/links")
-                .header("Tg-Chat-Id", String.valueOf(tgChatId))
+                .uri(SCRAPPER_API_V_1_0_LINKS)
+                .header(TG_CHAT_ID_HEADER, String.valueOf(tgChatId))
                 .retrieve()
                 .bodyToMono(ListLinksResponse.class)
                 .block();
@@ -50,8 +53,8 @@ public class ScrapperClientImpl implements ScrapperClient {
     @Override
     public void addLink(Integer tgChatId, AddLinkRequest addLinkRequest) {
         webClient.post()
-                .uri("scrapper-api/v1.0/links")
-                .header("Tg-Chat-Id", String.valueOf(tgChatId))
+                .uri(SCRAPPER_API_V_1_0_LINKS)
+                .header(TG_CHAT_ID_HEADER, String.valueOf(tgChatId))
                 .bodyValue(addLinkRequest)
                 .retrieve()
                 .bodyToMono(Void.class)
@@ -61,8 +64,8 @@ public class ScrapperClientImpl implements ScrapperClient {
     @Override
     public void deleteLink(Integer tgChatId, RemoveLinkRequest removeLinkRequest) {
         webClient.method(HttpMethod.DELETE)
-                .uri("scrapper-api/v1.0/links")
-                .header("Tg-Chat-Id", String.valueOf(tgChatId))
+                .uri(SCRAPPER_API_V_1_0_LINKS)
+                .header(TG_CHAT_ID_HEADER, String.valueOf(tgChatId))
                 .bodyValue(removeLinkRequest)
                 .retrieve()
                 .bodyToMono(Void.class)
