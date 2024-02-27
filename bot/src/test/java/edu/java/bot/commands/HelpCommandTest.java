@@ -6,24 +6,37 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.models.User;
 import edu.java.bot.models.UserState;
 import edu.java.bot.services.UserService;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class HelpCommandTest {
-    private static UserService userService;
-    private static Update update;
-    private static Message message;
-    private static Chat chat;
 
-    @BeforeAll
-    public static void mockInit() {
-        userService = Mockito.mock(UserService.class);
-        update = Mockito.mock(Update.class);
-        message = Mockito.mock(Message.class);
-        chat = Mockito.mock(Chat.class);
+    private final List<Command> commands;
+    @Mock
+    private UserService userService;
+    @Mock
+    private Update update;
+    @Mock
+    private Message message;
+    @Mock
+    private Chat chat;
+
+    @Autowired
+    public HelpCommandTest(List<Command> commands) {
+        this.commands = commands;
     }
 
 
@@ -35,24 +48,23 @@ public class HelpCommandTest {
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(chat.id()).thenReturn(1L);
-        HelpCommand helpCommand = new HelpCommand(userService);
+
+        HelpCommand helpCommand = new HelpCommand(userService, commands);
         Assertions.assertEquals(
                 helpCommand.handle(update).getParameters().get("text"),
                 """
-                        *Доступные команды:*
-                        /start - Зарегистрировать пользователя. \s
-                        /help - Вывести список команд. \s
-                        /track - Начать отслеживание ссылки. \s
-                        /untrack - Прекратить отслеживание ссылки. \s
-                        /list - Показать список отслеживаемых ссылок.
-                        """
+                        *Available commands:*
+                        /list - show list of tracked links
+                        /start - register a user
+                        /track - start tracking link
+                        /untrack - stop tracking link"""
         );
     }
 
 
     @Test
     public void commandAndDescription() {
-        HelpCommand helpCommand = new HelpCommand(userService);
+        HelpCommand helpCommand = new HelpCommand(userService, commands);
         Assertions.assertEquals(
                 helpCommand.command(),
                 "/help"
