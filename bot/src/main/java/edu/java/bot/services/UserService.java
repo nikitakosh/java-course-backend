@@ -3,12 +3,11 @@ package edu.java.bot.services;
 import edu.java.bot.models.Link;
 import edu.java.bot.models.User;
 import edu.java.bot.repositories.UserRepository;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

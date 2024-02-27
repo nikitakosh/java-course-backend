@@ -2,10 +2,10 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.Command;
 import edu.java.bot.models.User;
 import edu.java.bot.models.UserState;
 import edu.java.bot.services.UserService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -27,12 +27,13 @@ public class StartCommand implements Command {
 
     @Override
     public boolean supports(Update update) {
-        if (update.message().text().equals(command())) {
+        Long chatId = update.message().chat().id();
+        Optional<User> user = userService.findByChatId(chatId);
+        if (user.isEmpty() || (update.message().text().equals(command())
+                && user.get().getState() == UserState.NEUTRAL)) {
             return true;
         }
-        Long chatId = update.message().chat().id();
-        return userService.findByChatId(chatId).isPresent()
-                && userService.findByChatId(chatId).get().getState() == UserState.REGISTRATION;
+        return user.get().getState() == UserState.REGISTRATION;
     }
 
     @Override

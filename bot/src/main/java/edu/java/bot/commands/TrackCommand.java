@@ -2,12 +2,12 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.Command;
 import edu.java.bot.models.Link;
 import edu.java.bot.models.User;
 import edu.java.bot.models.UserState;
 import edu.java.bot.services.LinkService;
 import edu.java.bot.services.UserService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +32,15 @@ public class TrackCommand implements Command {
 
     @Override
     public boolean supports(Update update) {
-        if (update.message().text().equals(command())) {
+        Long chatId = update.message().chat().id();
+        Optional<User> user = userService.findByChatId(chatId);
+        if (update.message().text().equals(command())
+                && user.isPresent()
+                && user.get().getState() == UserState.NEUTRAL) {
             return true;
         }
-        Long chatId = update.message().chat().id();
-        return userService.findByChatId(chatId).isPresent()
-                && userService.findByChatId(chatId).get().getState() == UserState.TRACK;
+        return user.isPresent()
+                && user.get().getState() == UserState.TRACK;
     }
 
     @Override
