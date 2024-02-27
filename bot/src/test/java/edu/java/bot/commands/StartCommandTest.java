@@ -9,17 +9,27 @@ import edu.java.bot.services.UserService;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class StartCommandTest {
-
+    @Mock
+    private UserService userService;
+    @Mock
+    private Update update;
+    @Mock
+    private Message message;
+    @Mock
+    private Chat chat;
 
     @Test
     public void registrationUser() {
-        UserService userService = Mockito.mock(UserService.class);
-        Update update = Mockito.mock(Update.class);
-        Message message = Mockito.mock(Message.class);
-        Chat chat = Mockito.mock(Chat.class);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.text()).thenReturn("/start");
         Mockito.when(message.chat()).thenReturn(chat);
@@ -41,7 +51,6 @@ public class StartCommandTest {
 
     @Test
     public void commandAndDescription() {
-        UserService userService = Mockito.mock(UserService.class);
         StartCommand startCommand = new StartCommand(userService);
         Assertions.assertEquals(
                 startCommand.command(),
