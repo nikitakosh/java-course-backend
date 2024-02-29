@@ -9,6 +9,11 @@ springdoc:
 spring:
   application:
     name: scrapper
+  datasource:
+    url: jdbc:postgresql://postgresql:5432/scrapper
+    username: ${USERNAME}
+    password: ${PASSWORD}
+    driverClassName: org.postgresql.Driver
 
 server:
   port: 8080
