@@ -1,4 +1,4 @@
-package edu.java.controllers.dto;
+package edu.java.bot.controllers.dto;
 
 import java.util.List;
 import lombok.AllArgsConstructor;

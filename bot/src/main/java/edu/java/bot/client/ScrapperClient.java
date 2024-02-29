@@ -1,8 +1,9 @@
-package edu.java.client;
+package edu.java.bot.client;
 
-import edu.java.controllers.dto.AddLinkRequest;
-import edu.java.controllers.dto.ListLinksResponse;
-import edu.java.controllers.dto.RemoveLinkRequest;
+
+import edu.java.bot.controllers.dto.AddLinkRequest;
+import edu.java.bot.controllers.dto.ListLinksResponse;
+import edu.java.bot.controllers.dto.RemoveLinkRequest;
 
 public interface ScrapperClient {
     void registerChat(Integer tgChatId);

@@ -1,4 +1,4 @@
-package edu.java.bot.controllers.dto;
+package edu.java.controllers.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

@@ -1,7 +1,7 @@
 package edu.java.bot.configuration;
 
-import edu.java.bot.client.BotClient;
-import edu.java.bot.client.BotClientImpl;
+import edu.java.bot.client.ScrapperClient;
+import edu.java.bot.client.ScrapperClientImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,9 @@ public class ClientConfiguration {
     private final WebClient.Builder webClientBuilder;
 
     @Bean
-    public BotClient botClient() {
-        return new BotClientImpl(webClientBuilder);
+    public ScrapperClient scrapperClient() {
+        return new ScrapperClientImpl(webClientBuilder);
     }
+
+
 }

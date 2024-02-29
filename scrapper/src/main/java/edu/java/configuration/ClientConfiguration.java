@@ -1,7 +1,7 @@
 package edu.java.configuration;
 
-import edu.java.client.ScrapperClient;
-import edu.java.client.ScrapperClientImpl;
+import edu.java.client.BotClient;
+import edu.java.client.BotClientImpl;
 import edu.java.github.GitHubClient;
 import edu.java.github.GitHubClientImpl;
 import edu.java.stackoverflow.StackOverflowClient;
@@ -18,8 +18,8 @@ public class ClientConfiguration {
     private final WebClient.Builder webClientBuilder;
 
     @Bean
-    public ScrapperClient scrapperClient() {
-        return new ScrapperClientImpl(webClientBuilder);
+    public BotClient botClient() {
+        return new BotClientImpl(webClientBuilder);
     }
 
     @Bean

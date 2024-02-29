@@ -1,6 +1,5 @@
 package edu.java.bot;
 
-import edu.java.bot.client.BotClient;
 import edu.java.bot.configuration.ApplicationConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,6 +14,5 @@ public class BotApplication {
         ApplicationContext context = SpringApplication.run(BotApplication.class, args);
         Bot bot = context.getBean(ChangeTrackerBot.class);
         bot.start();
-        BotClient botClient = context.getBean(BotClient.class);
     }
 }

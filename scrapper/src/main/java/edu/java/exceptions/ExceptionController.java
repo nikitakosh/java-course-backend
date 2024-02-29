@@ -1,7 +1,7 @@
 package edu.java.exceptions;
 
 import edu.java.controllers.dto.ApiErrorResponse;
-import java.util.List;
+import java.util.Arrays;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,17 +13,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionController {
 
-    public static final String ERROR_DESCRIPTION = "Некорректные параметры запроса";
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler()
+    @ExceptionHandler
     public ApiErrorResponse handleNotExistentChatException(NotExistentChatException ex) {
         return new ApiErrorResponse(
-                "Чат не существует",
-                HttpStatus.NOT_FOUND.toString(),
+                "chat does not exist",
+                HttpStatus.BAD_REQUEST.toString(),
                 "NotExistentChatException",
                 ex.getMessage(),
-                List.of()
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ApiErrorResponse handleChatAlreadyExistException(ChatAlreadyExistException ex) {
+        return new ApiErrorResponse(
+                "chat already exist",
+                HttpStatus.BAD_REQUEST.toString(),
+                "ChatAlreadyExistException",
+                ex.getMessage(),
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
         );
     }
 
@@ -31,37 +41,59 @@ public class ExceptionController {
     @ExceptionHandler
     public ApiErrorResponse handleMissingRequestHeaderException(MissingRequestHeaderException ex) {
         return new ApiErrorResponse(
-                "пропущены требуемые заголовки запроса",
+                "Missing required request headers",
                 HttpStatus.BAD_REQUEST.toString(),
                 "MissingRequestHeaderException",
                 ex.getMessage(),
-                List.of()
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
         );
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ApiErrorResponse handleFieldException(MethodArgumentNotValidException ex) {
-
         return new ApiErrorResponse(
-                ERROR_DESCRIPTION,
-                ex.getStatusCode().toString(),
+                "invalid field value",
+                HttpStatus.BAD_REQUEST.toString(),
                 ex.getTitleMessageCode(),
-                ex.getMessage(),
-                List.of(ex.getSuppressedFields())
+                "MethodArgumentNotValidException",
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
         );
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ApiErrorResponse handleEmptyRequestBodyException(HttpMessageNotReadableException ex) {
-
         return new ApiErrorResponse(
-                ERROR_DESCRIPTION,
+                "request body missing",
                 HttpStatus.BAD_REQUEST.toString(),
-                ex.toString(),
+                "HttpMessageNotReadableException",
                 ex.getMessage(),
-                List.of()
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ApiErrorResponse handleLinkAlreadyTrackException(LinkAlreadyTrackException ex) {
+        return new ApiErrorResponse(
+                "link already tracked",
+                HttpStatus.BAD_REQUEST.toString(),
+                "LinkAlreadyTrackException",
+                ex.getMessage(),
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ApiErrorResponse handleLinkWasNotTrackedException(LinkWasNotTrackedException ex) {
+        return new ApiErrorResponse(
+                "link was not tracked",
+                HttpStatus.BAD_REQUEST.toString(),
+                "LinkWasNotTrackedException",
+                ex.getMessage(),
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
         );
     }
 }

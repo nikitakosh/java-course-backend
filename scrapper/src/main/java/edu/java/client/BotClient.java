@@ -1,6 +1,7 @@
-package edu.java.bot.client;
+package edu.java.client;
 
-import edu.java.bot.controllers.dto.LinkUpdate;
+
+import edu.java.controllers.dto.LinkUpdate;
 
 public interface BotClient {
     LinkUpdate sendMessage(LinkUpdate linkUpdate);
