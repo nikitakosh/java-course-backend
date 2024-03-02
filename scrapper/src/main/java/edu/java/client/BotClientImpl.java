@@ -18,12 +18,12 @@ public class BotClientImpl implements BotClient {
     }
 
     @Override
-    public LinkUpdate sendMessage(LinkUpdate linkUpdate) {
-        return webClient.post()
+    public void sendMessage(LinkUpdate linkUpdate) {
+        webClient.post()
                 .uri("/bot-api/v1.0/updates")
                 .bodyValue(linkUpdate)
                 .retrieve()
-                .bodyToMono(LinkUpdate.class)
+                .bodyToMono(Void.class)
                 .block();
     }
 }

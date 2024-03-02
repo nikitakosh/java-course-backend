@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionController {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
     public ApiErrorResponse handleNotExistentChatException(NotExistentChatException ex) {
         return new ApiErrorResponse(
                 "chat does not exist",
-                HttpStatus.BAD_REQUEST.toString(),
+                HttpStatus.NOT_FOUND.toString(),
                 "NotExistentChatException",
                 ex.getMessage(),
                 Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
