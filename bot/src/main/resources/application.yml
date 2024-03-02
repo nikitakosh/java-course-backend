@@ -1,6 +1,8 @@
 app:
   telegram-token: ${TELEGRAM-TOKEN}
-
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 spring:
   application:
     name: bot
@@ -10,6 +12,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/ChangeTracker
     username: postgres
     password: admin
+    driverClassName: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: create

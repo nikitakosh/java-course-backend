@@ -12,9 +12,9 @@ public abstract class IntegrationTest {
 
     static {
         POSTGRES = new PostgreSQLContainer<>("postgres:15")
-            .withDatabaseName("scrapper")
-            .withUsername("postgres")
-            .withPassword("postgres");
+                .withDatabaseName("scrapper")
+                .withUsername("postgres")
+                .withPassword("postgres");
         POSTGRES.start();
 
         runMigrations(POSTGRES);

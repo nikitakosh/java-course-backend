@@ -2,10 +2,11 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.Command;
 import edu.java.bot.models.Link;
 import edu.java.bot.models.User;
+import edu.java.bot.models.UserState;
 import edu.java.bot.services.UserService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,14 @@ public class ListCommand implements Command {
     @Override
     public String description() {
         return "show list of tracked links";
+    }
+
+    @Override
+    public boolean supports(Update update) {
+        Optional<User> user = userService.findByChatId(update.message().chat().id());
+        return update.message().text().equals(command())
+                && user.isPresent()
+                && user.get().getState() == UserState.NEUTRAL;
     }
 
     @Override

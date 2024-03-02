@@ -6,16 +6,13 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.response.BaseResponse;
 import edu.java.bot.configuration.ApplicationConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import edu.java.bot.messageProcessors.UserMessageProcessor;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class ChangeTrackerBot implements Bot {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChangeTrackerBot.class);
     private final ApplicationConfig config;
     private final UserMessageProcessor messageProcessor;
     private TelegramBot bot;

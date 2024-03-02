@@ -2,17 +2,15 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.Command;
 import edu.java.bot.models.Link;
 import edu.java.bot.models.User;
 import edu.java.bot.models.UserState;
 import edu.java.bot.services.LinkService;
 import edu.java.bot.services.UserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.util.Objects;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -33,12 +31,15 @@ public class UntrackCommand implements Command {
 
     @Override
     public boolean supports(Update update) {
-        if (update.message().text().equals(command())) {
+        Long chatId = update.message().chat().id();
+        Optional<User> user = userService.findByChatId(chatId);
+        if (update.message().text().equals(command())
+                && user.isPresent()
+                && user.get().getState() == UserState.NEUTRAL) {
             return true;
         }
-        Long chatId = update.message().chat().id();
-        return userService.findByChatId(chatId).isPresent() &&
-                userService.findByChatId(chatId).get().getState() == UserState.UNTRACK;
+        return user.isPresent()
+                && user.get().getState() == UserState.UNTRACK;
     }
 
     @Override
@@ -54,8 +55,8 @@ public class UntrackCommand implements Command {
         User user = userService.findByChatId(chatId).get();
         if (user.getState() == UserState.UNTRACK) {
             Optional<Link> link = linkService.findByUrl(message);
-            if (link.isEmpty() ||
-                    !userService.wasLinkTracked(user, link.get())) {
+            if (link.isEmpty()
+                    || !userService.wasLinkTracked(user, link.get())) {
                 user.setState(UserState.NEUTRAL);
                 userService.save(user);
                 return new SendMessage(
