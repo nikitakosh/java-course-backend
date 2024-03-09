@@ -1,25 +1,35 @@
-package commands;
+package edu.java.bot.commands;
+
 
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.commands.StartCommand;
 import edu.java.bot.models.User;
 import edu.java.bot.services.UserService;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-import java.util.Optional;
-
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class StartCommandTest {
+    @Mock
+    private UserService userService;
+    @Mock
+    private Update update;
+    @Mock
+    private Message message;
+    @Mock
+    private Chat chat;
+
     @Test
     public void registrationUser() {
-        UserService userService = Mockito.mock(UserService.class);
-        Update update = Mockito.mock(Update.class);
-        Message message = Mockito.mock(Message.class);
-        Chat chat = Mockito.mock(Chat.class);
-
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.text()).thenReturn("/start");
         Mockito.when(message.chat()).thenReturn(chat);
@@ -27,9 +37,8 @@ public class StartCommandTest {
         User user = new User();
         user.setId(1L);
         user.setChatID(1L);
-        Mockito.when(userService.findByChatId(Mockito.anyLong()))
-                .thenReturn(Optional.of(user));
         StartCommand startCommand = new StartCommand(userService);
+        Mockito.when(userService.findByChatId(Mockito.anyLong())).thenReturn(Optional.of(user));
         Assertions.assertEquals(
                 startCommand.handle(update).getParameters().get("text"),
                 "Please, enter your name"
@@ -42,7 +51,6 @@ public class StartCommandTest {
 
     @Test
     public void commandAndDescription() {
-        UserService userService = Mockito.mock(UserService.class);
         StartCommand startCommand = new StartCommand(userService);
         Assertions.assertEquals(
                 startCommand.command(),

@@ -1,36 +1,37 @@
-package commands;
+package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.commands.TrackCommand;
 import edu.java.bot.models.Link;
 import edu.java.bot.models.User;
 import edu.java.bot.models.UserState;
 import edu.java.bot.services.LinkService;
 import edu.java.bot.services.UserService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TrackCommandTest {
-    private static UserService userService;
-    private static LinkService linkService;
-    private static Update update;
-    private static Message message;
-    private static Chat chat;
+    @Mock
+    private UserService userService;
+    @Mock
+    private LinkService linkService;
+    @Mock
+    private Update update;
+    @Mock
+    private Message message;
+    @Mock
+    private Chat chat;
 
-    @BeforeAll
-    public static void mockInit() {
-        userService = Mockito.mock(UserService.class);
-        linkService = Mockito.mock(LinkService.class);
-        update = Mockito.mock(Update.class);
-        message = Mockito.mock(Message.class);
-        chat = Mockito.mock(Chat.class);
-    }
 
     @Test
     public void notRegisteredOrNeutralUser() {

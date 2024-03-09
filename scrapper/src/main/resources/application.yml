@@ -3,10 +3,17 @@ app:
     enable: true
     interval: 10s
     force-check-delay: 10s
-
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 spring:
   application:
     name: scrapper
+  datasource:
+    url: jdbc:postgresql://postgresql:5432/scrapper
+    username: ${USERNAME}
+    password: ${PASSWORD}
+    driverClassName: org.postgresql.Driver
 
 server:
   port: 8080
