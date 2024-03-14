@@ -29,10 +29,9 @@ public class JdbcTgChatTest extends IntegrationTest {
     @Rollback
     public void addTest() {
         chatRepository.add(1L);
-        Chat chatFromDB = jdbcClient.sql("SELECT id FROM chat WHERE id = :id").param("id", 1L)
-                .query(Chat.class)
-                .single();
-        Assertions.assertEquals(1L, chatFromDB.getId());
+        Optional<Chat> chat = chatRepository.find(1L);
+        Assertions.assertTrue(chat.isPresent());
+        Assertions.assertEquals(1L, chat.get().getId());
     }
 
     @Test
@@ -41,10 +40,8 @@ public class JdbcTgChatTest extends IntegrationTest {
     public void removeTest() {
         chatRepository.add(1L);
         chatRepository.remove(1L);
-        Optional<Chat> chatFromDB = jdbcClient.sql("SELECT id FROM chat WHERE id = :id").param("id", 1L)
-                .query(Chat.class)
-                .optional();
-        Assertions.assertTrue(chatFromDB.isEmpty());
+        Optional<Chat> chat = chatRepository.find(1L);
+        Assertions.assertTrue(chat.isEmpty());
     }
 
     @Test
@@ -53,7 +50,7 @@ public class JdbcTgChatTest extends IntegrationTest {
     public void findAllTest() {
         chatRepository.add(1L);
         chatRepository.add(2L);
-        List<Long> chats = jdbcClient.sql("SELECT id FROM chat").query(Long.class).list();
+        List<Long> chats = chatRepository.findAll().stream().map(Chat::getId).toList();
         Assertions.assertEquals(List.of(1L, 2L), chats);
     }
 }

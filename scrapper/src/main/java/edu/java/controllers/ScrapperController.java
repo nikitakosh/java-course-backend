@@ -1,12 +1,10 @@
 package edu.java.controllers;
 
 import edu.java.controllers.dto.AddLinkRequest;
-import edu.java.controllers.dto.LinkResponse;
 import edu.java.controllers.dto.ListLinksResponse;
 import edu.java.controllers.dto.RemoveLinkRequest;
-import edu.java.services.ChatService;
-import edu.java.services.LinkService;
-import java.util.List;
+import edu.java.services.jdbc.JdbcLinkService;
+import edu.java.services.jdbc.JdbcTgChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,15 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ScrapperController {
 
-    private final ChatService chatService;
-    private final LinkService linkService;
+    private final JdbcTgChatService chatService;
+    private final JdbcLinkService linkService;
 
     @PostMapping("/tg-chat/{id}")
     public ResponseEntity<Void> registerChat(
             @PathVariable("id") Integer tgChatId
     ) {
-        chatService.registerChat(tgChatId);
-        log.info("чат зарегистрирован");
+        chatService.register(tgChatId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -40,8 +37,7 @@ public class ScrapperController {
     public ResponseEntity<Void> deleteChat(
             @PathVariable("id") Integer tgChatId
     ) {
-        chatService.removeChat(tgChatId);
-        log.info("чат успешно удалён");
+        chatService.unregister(tgChatId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -49,13 +45,8 @@ public class ScrapperController {
     public ResponseEntity<ListLinksResponse> getLinks(
             @RequestHeader("Tg-Chat-Id") Integer tgChatId
     ) {
-        List<LinkResponse> linkResponses = linkService.getLinks(tgChatId).stream()
-                .map(link -> new LinkResponse(1, link)).toList();
-        log.info("ссылки успешно получены");
-        return new ResponseEntity<>(
-                new ListLinksResponse(linkResponses, linkResponses.size()),
-                HttpStatus.OK
-        );
+        ListLinksResponse listLinksResponse = linkService.listAll(tgChatId);
+        return new ResponseEntity<>(listLinksResponse, HttpStatus.OK);
     }
 
     @PostMapping("/links")
@@ -63,8 +54,7 @@ public class ScrapperController {
             @RequestHeader("Tg-Chat-Id") Integer tgChatId,
             @RequestBody AddLinkRequest addLinkRequest
     ) {
-        linkService.addLink(tgChatId, addLinkRequest.getLink());
-        log.info("ссылка успешна добавлена");
+        linkService.add(tgChatId, addLinkRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -73,8 +63,7 @@ public class ScrapperController {
             @RequestHeader("Tg-Chat-Id") Integer tgChatId,
             @RequestBody RemoveLinkRequest removeLinkRequest
     ) {
-        linkService.removeLink(tgChatId, removeLinkRequest.getLink());
-        log.info("ссылка успешна удалена");
+        linkService.remove(tgChatId, removeLinkRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

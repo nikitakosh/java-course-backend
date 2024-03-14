@@ -1,6 +1,13 @@
 package edu.java.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChatLink {
     private Integer linkId;
-    private Integer chatId;
+    private Long chatId;
 }

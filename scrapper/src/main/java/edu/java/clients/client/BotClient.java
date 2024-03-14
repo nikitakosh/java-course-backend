@@ -1,4 +1,4 @@
-package edu.java.client;
+package edu.java.clients.client;
 
 
 import edu.java.controllers.dto.LinkUpdate;

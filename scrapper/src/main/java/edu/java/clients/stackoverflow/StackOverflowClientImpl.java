@@ -1,6 +1,8 @@
-package edu.java.stackoverflow;
+package edu.java.clients.stackoverflow;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -31,5 +33,12 @@ public class StackOverflowClientImpl implements StackOverflowClient {
                         .block())
                 .items()
                 .getFirst();
+    }
+
+    @Override
+    public boolean isSupport(String url) {
+        Pattern pattern = Pattern.compile("^https://api\\.stackexchange\\.com/question/[^/]+?site=stackoverflow");
+        Matcher matcher = pattern.matcher(url);
+        return matcher.matches();
     }
 }

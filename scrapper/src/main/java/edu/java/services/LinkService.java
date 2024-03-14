@@ -1,52 +1,19 @@
 package edu.java.services;
 
-import edu.java.exceptions.LinkAlreadyTrackException;
-import edu.java.exceptions.LinkWasNotTrackedException;
-import edu.java.exceptions.NotExistentChatException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import edu.java.controllers.dto.AddLinkRequest;
+import edu.java.controllers.dto.ListLinksResponse;
+import edu.java.controllers.dto.RemoveLinkRequest;
+import edu.java.models.Link;
 import java.util.List;
-import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class LinkService {
-    public static final String CHAT_DOES_NOT_EXIST = "chat does not exist";
-    private final Map<Integer, List<String>> links = new HashMap<>();
+public interface LinkService {
+    Link add(long tgChatId, AddLinkRequest addLinkRequest);
 
-    public List<String> getLinks(Integer tgChatId) {
-        if (!links.containsKey(tgChatId)) {
-            throw new NotExistentChatException(CHAT_DOES_NOT_EXIST);
-        }
-        return links.get(tgChatId);
-    }
+    Link remove(long tgChatId, RemoveLinkRequest removeLinkRequest);
 
-    public void putChat(Integer tgChatId) {
-        log.info("putChat");
-        links.put(tgChatId, new ArrayList<>());
-    }
+    void update(Link link);
 
-    public void addLink(Integer tgChatId, String url) {
-        if (!links.containsKey(tgChatId)) {
-            throw new NotExistentChatException(CHAT_DOES_NOT_EXIST);
-        }
-        if (links.get(tgChatId).contains(url)) {
-            throw new LinkAlreadyTrackException("link already tracked");
-        }
-        links.get(tgChatId).add(url);
-    }
+    List<Link> findOldLinks(long secondsThreshold);
 
-    public void removeLink(Integer tgChatId, String url) {
-        if (links.containsKey(tgChatId)) {
-            throw new NotExistentChatException(CHAT_DOES_NOT_EXIST);
-        }
-        if (!links.get(tgChatId).contains(url)) {
-            throw new LinkWasNotTrackedException("link was not tracked");
-        }
-        links.get(tgChatId).remove(url);
-    }
+    ListLinksResponse listAll(long tgChatId);
 }

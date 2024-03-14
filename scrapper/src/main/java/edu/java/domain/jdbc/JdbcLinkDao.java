@@ -1,14 +1,11 @@
 package edu.java.domain.jdbc;
 
 import edu.java.domain.LinkDao;
-import edu.java.exceptions.NotExistentChatException;
-import edu.java.exceptions.NotExistentLinkException;
 import edu.java.models.Link;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -17,64 +14,56 @@ import org.springframework.stereotype.Repository;
 @Slf4j
 public class JdbcLinkDao implements LinkDao {
     private final JdbcClient jdbcClient;
-    private final JdbcTgChatRepository chatRepository;
-    private final JdbcChatLinkRepository chatLinkRepository;
+
     @Override
-    public void add(Long tgChatId, Link link) {
-        if (chatRepository.findChat(tgChatId).isEmpty()) {
-            throw new NotExistentLinkException("chat is not exist");
-        }
-        int linkId;
-        if (findLink(link.getUrl()).isPresent()) {
-            linkId = jdbcClient.sql("SELECT id FROM link WHERE url = :url")
-                    .param("url", link.getUrl())
-                    .query(Integer.class)
-                    .single();
-        } else {
-            linkId = jdbcClient.sql("INSERT INTO link(url, updated_at) VALUES (?, ?) RETURNING id")
-                    .params(List.of(link.getUrl(), link.getUpdatedAt()))
-                    .query(Integer.class)
-                    .single();
-        }
-        if (chatLinkRepository.find(linkId, tgChatId).isEmpty()) {
-            jdbcClient.sql("INSERT INTO chat_link(link_id, chat_id) VALUES(?, ?)")
-                    .params(List.of(linkId, tgChatId))
-                    .update();
-        }
+    public Integer add(Link link) {
+        return jdbcClient.sql("INSERT INTO link(url, updated_at, created_at) VALUES (?, ?, ?) RETURNING id")
+                .params(link.getUrl(), link.getUpdatedAt(), link.getCreatedAt())
+                .query(Integer.class)
+                .single();
     }
 
     @Override
-    public void remove(Long tgChatId, String url) {
-        if (chatRepository.findChat(tgChatId).isEmpty()) {
-            throw new NotExistentChatException("chat not exist");
-        }
-        Optional<Link> link = findLink(url);
-        if (link.isEmpty()) {
-            throw new NotExistentLinkException("link not exist");
-        }
-        chatLinkRepository.remove(tgChatId, link.get());
+    public Integer remove(String url) {
+        return jdbcClient.sql("DELETE FROM link WHERE url = ?")
+                .param(url)
+                .update();
+    }
+
+    @Override
+    public void update(Link link) {
+        jdbcClient.sql("UPDATE link SET updated_at = ?, created_at = ? WHERE url = ?")
+                .params(link.getUpdatedAt(), link.getCreatedAt(), link.getUrl())
+                .update();
     }
 
 
     @Override
-    public List<Link> findAll(Long tgChatId) {
+    public List<Link> findAll() {
+        return jdbcClient.sql("SELECT * FROM link")
+                .query(Link.class)
+                .list();
+    }
+
+
+    @Override
+    public List<Link> findAllByChat(Long tgChatId) {
         return jdbcClient.sql(
-                """
-                SELECT link.id, link.url, link.updated_at
-                FROM link
-                JOIN chat_link
-                ON link.id = chat_link.link_id
-                WHERE chat_link.chat_id = :tgChatId
-                """)
-                .param("tgChatId", tgChatId)
+                        """
+                                SELECT *
+                                FROM link
+                                JOIN chat_link
+                                ON link.id = chat_link.link_id
+                                WHERE chat_id = ?
+                                """).param(tgChatId)
                 .query(Link.class)
                 .list();
     }
 
     @Override
-    public Optional<Link> findLink(String url) {
-        return jdbcClient.sql("SELECT * FROM link WHERE link.url = :url")
-                .param("url", url)
+    public Optional<Link> find(String url) {
+        return jdbcClient.sql("SELECT * FROM link WHERE link.url = ?")
+                .param(url)
                 .query(Link.class)
                 .optional();
     }

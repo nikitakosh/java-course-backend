@@ -1,11 +1,11 @@
 package edu.java.configuration;
 
-import edu.java.client.BotClient;
-import edu.java.client.BotClientImpl;
-import edu.java.github.GitHubClient;
-import edu.java.github.GitHubClientImpl;
-import edu.java.stackoverflow.StackOverflowClient;
-import edu.java.stackoverflow.StackOverflowClientImpl;
+import edu.java.clients.client.BotClient;
+import edu.java.clients.client.BotClientImpl;
+import edu.java.clients.github.GitHubClient;
+import edu.java.clients.github.GitHubClientImpl;
+import edu.java.clients.stackoverflow.StackOverflowClient;
+import edu.java.clients.stackoverflow.StackOverflowClientImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

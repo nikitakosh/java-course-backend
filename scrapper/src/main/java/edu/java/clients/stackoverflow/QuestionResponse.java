@@ -1,4 +1,4 @@
-package edu.java.stackoverflow;
+package edu.java.clients.stackoverflow;
 
 
 import java.util.List;
