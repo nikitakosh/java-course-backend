@@ -8,6 +8,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 public class ScrapperClientImpl implements ScrapperClient {
     public static final String BASE_URL = "http://localhost:8080";
+    public static final String LINKS = "/links";
+    public static final String TG_CHAT_ID = "Tg-Chat-Id";
     private final WebClient webClient;
 
     public ScrapperClientImpl(WebClient.Builder webClientBuilder) {
@@ -40,8 +42,8 @@ public class ScrapperClientImpl implements ScrapperClient {
     @Override
     public ListLinksResponse getLinks(Long tgChatId) {
         return webClient.get()
-                .uri("/links")
-                .header("Tg-Chat-Id", String.valueOf(tgChatId))
+                .uri(LINKS)
+                .header(TG_CHAT_ID, String.valueOf(tgChatId))
                 .retrieve()
                 .bodyToMono(ListLinksResponse.class)
                 .block();
@@ -50,8 +52,8 @@ public class ScrapperClientImpl implements ScrapperClient {
     @Override
     public void addLink(Long tgChatId, AddLinkRequest addLinkRequest) {
         webClient.post()
-                .uri("/links")
-                .header("Tg-Chat-Id", String.valueOf(tgChatId))
+                .uri(LINKS)
+                .header(TG_CHAT_ID, String.valueOf(tgChatId))
                 .bodyValue(addLinkRequest)
                 .retrieve()
                 .bodyToMono(Void.class)
@@ -61,8 +63,8 @@ public class ScrapperClientImpl implements ScrapperClient {
     @Override
     public void deleteLink(Long tgChatId, RemoveLinkRequest removeLinkRequest) {
         webClient.method(HttpMethod.DELETE)
-                .uri("/links")
-                .header("Tg-Chat-Id", String.valueOf(tgChatId))
+                .uri(LINKS)
+                .header(TG_CHAT_ID, String.valueOf(tgChatId))
                 .bodyValue(removeLinkRequest)
                 .retrieve()
                 .bodyToMono(Void.class)
