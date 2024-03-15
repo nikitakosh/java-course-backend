@@ -5,7 +5,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import edu.java.clients.stackoverflow.ItemResponse;
+import edu.java.clients.stackoverflow.dto.QuestionItemResponse;
 import edu.java.clients.stackoverflow.StackOverflowClientImpl;
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.AfterAll;
@@ -54,7 +54,7 @@ public class StackOverflowClientTest {
                                         ]
                                 }
                                 """)));
-        ItemResponse itemResponse = stackOverflowClient.fetchQuestion(id);
+        QuestionItemResponse itemResponse = stackOverflowClient.fetchQuestion(id);
         Assertions.assertEquals("What is a StackOverflowError?", itemResponse.title());
         Assertions.assertEquals(OffsetDateTime.parse("2023-03-30T21:57:02Z"), itemResponse.lastActivityDate());
     }

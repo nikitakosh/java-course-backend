@@ -15,4 +15,8 @@ public class Link {
     private String url;
     private OffsetDateTime updatedAt;
     private OffsetDateTime createdAt;
+    private String commitMessage;
+    private String commitSHA;
+    private Long answerId;
+    private String answerOwner;
 }

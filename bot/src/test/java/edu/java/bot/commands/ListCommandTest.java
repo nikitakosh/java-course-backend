@@ -20,6 +20,4 @@ public class ListCommandTest {
     private static Chat chat;
 
 
-
-
 }

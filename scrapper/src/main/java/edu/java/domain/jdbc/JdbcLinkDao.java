@@ -32,8 +32,26 @@ public class JdbcLinkDao implements LinkDao {
 
     @Override
     public void update(Link link) {
-        jdbcClient.sql("UPDATE link SET updated_at = ?, created_at = ? WHERE url = ?")
-                .params(link.getUpdatedAt(), link.getCreatedAt(), link.getUrl())
+        jdbcClient.sql(
+                        """
+                                UPDATE link
+                                SET updated_at = ?,
+                                created_at = ?,
+                                commit_message = ?,
+                                commit_sha = ?,
+                                answer_id = ?,
+                                answer_owner = ?
+                                WHERE url = ?
+                                """)
+                .params(
+                        link.getUpdatedAt(),
+                        link.getCreatedAt(),
+                        link.getCommitMessage(),
+                        link.getCommitSHA(),
+                        link.getAnswerId(),
+                        link.getAnswerOwner(),
+                        link.getUrl()
+                )
                 .update();
     }
 

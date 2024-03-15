@@ -21,5 +21,4 @@ public class StartCommandTest {
     private Chat chat;
 
 
-
 }

@@ -16,6 +16,7 @@ public class LinkUpdate {
     private String description;
     @NotEmpty
     private List<Long> tgChatIds;
-
+    private boolean isAnyAdditionalInfo;
+    private String additionalInfo;
 
 }

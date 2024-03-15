@@ -1,7 +1,5 @@
 package edu.java.clients.github;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.springframework.web.reactive.function.client.WebClient;
 
 public class GitHubClientImpl implements GitHubClient {
@@ -28,10 +26,15 @@ public class GitHubClientImpl implements GitHubClient {
     }
 
     @Override
-    public boolean isSupport(String url) {
-        Pattern pattern = Pattern.compile("^https://github\\.com/[^/]+/[^/]+$");
-        Matcher matcher = pattern.matcher(url);
-        return matcher.matches();
+    public CommitResponse fetchCommit(String owner, String repo) {
+        return this.webClient.get()
+                .uri("/repos/{owner}/{repo}/commits", owner, repo)
+                .retrieve()
+                .toEntityList(CommitResponse.class)
+                .block()
+                .getBody()
+                .getFirst();
     }
+
 
 }

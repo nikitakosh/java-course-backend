@@ -29,7 +29,4 @@ public class HelpCommandTest {
     private Chat chat;
 
 
-
-
-
 }

@@ -1,7 +1,10 @@
 package edu.java.clients.stackoverflow;
 
-public interface StackOverflowClient {
-    ItemResponse fetchQuestion(String id);
+import edu.java.clients.stackoverflow.dto.AnswerItemResponse;
+import edu.java.clients.stackoverflow.dto.QuestionItemResponse;
 
-    boolean isSupport(String url);
+public interface StackOverflowClient {
+    QuestionItemResponse fetchQuestion(String id);
+
+    AnswerItemResponse fetchAnswer(String id);
 }

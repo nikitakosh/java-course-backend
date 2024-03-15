@@ -28,7 +28,9 @@ public class LinkUpdaterScheduler {
     @Scheduled(fixedDelayString = "#{@scheduler.interval()}")
     public void update() {
         List<Link> oldLinks = linkService.findOldLinks(secondsThreshold);
+        log.info("in scheduler - " + secondsThreshold);
         for (Link link : oldLinks) {
+            log.info(link.getUrl());
             LinkUpdater linkUpdater = linkUpdaters.stream()
                     .filter(updater -> updater.supports(URI.create(link.getUrl())))
                     .findFirst()

@@ -82,7 +82,7 @@ public class JdbcLinkService implements LinkService {
                 .stream()
                 .filter(
                         link -> ChronoUnit.SECONDS.between(
-                                OffsetDateTime.now(), link.getCreatedAt()
+                                link.getCreatedAt(), OffsetDateTime.now()
                         ) >= secondsThreshold
                 )
                 .toList();
