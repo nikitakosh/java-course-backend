@@ -5,10 +5,12 @@ import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.commands.Command;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class MessageProcessor implements UserMessageProcessor {
     private final List<Command> commands;
 
@@ -19,6 +21,7 @@ public class MessageProcessor implements UserMessageProcessor {
 
     @Override
     public SendMessage process(Update update) {
+        log.info(update.message().text());
         Command command = commands()
                 .stream()
                 .filter(cmd -> cmd.supports(update))

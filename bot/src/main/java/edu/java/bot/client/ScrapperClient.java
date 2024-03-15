@@ -6,13 +6,13 @@ import edu.java.bot.controllers.dto.ListLinksResponse;
 import edu.java.bot.controllers.dto.RemoveLinkRequest;
 
 public interface ScrapperClient {
-    void registerChat(Integer tgChatId);
+    void registerChat(Long tgChatId);
 
-    void deleteChat(Integer tgChatId);
+    void deleteChat(Long tgChatId);
 
-    ListLinksResponse getLinks(Integer tgChatId);
+    ListLinksResponse getLinks(Long tgChatId);
 
-    void addLink(Integer tgChatId, AddLinkRequest addLinkRequest);
+    void addLink(Long tgChatId, AddLinkRequest addLinkRequest);
 
-    void deleteLink(Integer tgChatId, RemoveLinkRequest removeLinkRequest);
+    void deleteLink(Long tgChatId, RemoveLinkRequest removeLinkRequest);
 }

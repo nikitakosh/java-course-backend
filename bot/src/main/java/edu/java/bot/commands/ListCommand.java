@@ -2,11 +2,9 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.models.Link;
-import edu.java.bot.models.User;
-import edu.java.bot.models.UserState;
-import edu.java.bot.services.UserService;
-import java.util.Optional;
+import edu.java.bot.client.ScrapperClient;
+import edu.java.bot.controllers.dto.LinkResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ListCommand implements Command {
 
-    private final UserService userService;
+    private final ScrapperClient scrapperClient;
 
     @Override
     public String command() {
@@ -27,37 +25,17 @@ public class ListCommand implements Command {
     }
 
     @Override
-    public boolean supports(Update update) {
-        Optional<User> user = userService.findByChatId(update.message().chat().id());
-        return update.message().text().equals(command())
-                && user.isPresent()
-                && user.get().getState() == UserState.NEUTRAL;
-    }
-
-    @Override
     public SendMessage handle(Update update) {
         Long chatId = update.message().chat().id();
-        if (userService.findByChatId(chatId).isEmpty()) {
-            return new SendMessage(
-                    chatId,
-                    "Please register! Use command /start"
-            );
-        }
-        User user = userService.findByChatId(chatId).get();
-        if (user.getLinks().isEmpty()) {
-            return new SendMessage(
-                    chatId,
-                    "There are no tracked links"
-            );
-        } else {
-            String urls = user.getLinks().stream()
-                    .map(Link::getUrl)
-                    .reduce("", (url1, url2) -> url1 + "\n" + url2);
-            return new SendMessage(
-                    chatId,
-                    "Tracked Links: " + urls
-            );
-        }
+        List<String> urls = scrapperClient.getLinks(chatId)
+                .getLinks().stream()
+                .map(LinkResponse::getUrl)
+                .toList();
+        return new SendMessage(
+                chatId,
+                "Tracked links:"
+                        + urls.stream().reduce("\n", (url1, url2) -> url1 + "\n" + url2)
+        );
     }
 
 

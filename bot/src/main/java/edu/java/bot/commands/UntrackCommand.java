@@ -2,13 +2,8 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.models.Link;
-import edu.java.bot.models.User;
-import edu.java.bot.models.UserState;
-import edu.java.bot.services.LinkService;
-import edu.java.bot.services.UserService;
-import java.util.Objects;
-import java.util.Optional;
+import edu.java.bot.client.ScrapperClient;
+import edu.java.bot.controllers.dto.RemoveLinkRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +11,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UntrackCommand implements Command {
 
-    private final UserService userService;
-    private final LinkService linkService;
+    private final ScrapperClient scrapperClient;
 
     @Override
     public String command() {
@@ -29,56 +23,15 @@ public class UntrackCommand implements Command {
         return "stop tracking link";
     }
 
-    @Override
-    public boolean supports(Update update) {
-        Long chatId = update.message().chat().id();
-        Optional<User> user = userService.findByChatId(chatId);
-        if (update.message().text().equals(command())
-                && user.isPresent()
-                && user.get().getState() == UserState.NEUTRAL) {
-            return true;
-        }
-        return user.isPresent()
-                && user.get().getState() == UserState.UNTRACK;
-    }
 
     @Override
     public SendMessage handle(Update update) {
         String message = update.message().text();
         Long chatId = update.message().chat().id();
-        if (userService.findByChatId(chatId).isEmpty()) {
-            return new SendMessage(
-                    chatId,
-                    "Please register! Use command /start"
-            );
-        }
-        User user = userService.findByChatId(chatId).get();
-        if (user.getState() == UserState.UNTRACK) {
-            Optional<Link> link = linkService.findByUrl(message);
-            if (link.isEmpty()
-                    || !userService.wasLinkTracked(user, link.get())) {
-                user.setState(UserState.NEUTRAL);
-                userService.save(user);
-                return new SendMessage(
-                        chatId,
-                        "This link was not tracked"
-                );
-            }
-
-            user.getLinks().removeIf(l -> Objects.equals(l.getUrl(), link.get().getUrl()));
-            user.setState(UserState.NEUTRAL);
-            userService.save(user);
-            return new SendMessage(
-                    chatId,
-                    "The link is no longer tracked"
-            );
-        } else {
-            user.setState(UserState.UNTRACK);
-            userService.save(user);
-            return new SendMessage(
-                    chatId,
-                    "Please, enter the link you want to unfollow"
-            );
-        }
+        scrapperClient.deleteLink(chatId, new RemoveLinkRequest(message.split(" ")[0]));
+        return new SendMessage(
+                chatId,
+                "Link is no longer tracked"
+        );
     }
 }
