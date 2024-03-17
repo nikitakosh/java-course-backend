@@ -1,10 +1,12 @@
 package edu.java.controllers;
 
 import edu.java.controllers.dto.AddLinkRequest;
+import edu.java.controllers.dto.LinkResponse;
 import edu.java.controllers.dto.ListLinksResponse;
 import edu.java.controllers.dto.RemoveLinkRequest;
 import edu.java.services.jdbc.JdbcLinkService;
 import edu.java.services.jdbc.JdbcTgChatService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -45,8 +47,11 @@ public class ScrapperController {
     public ResponseEntity<ListLinksResponse> getLinks(
             @RequestHeader("Tg-Chat-Id") Integer tgChatId
     ) {
-        ListLinksResponse listLinksResponse = linkService.listAll(tgChatId);
-        return new ResponseEntity<>(listLinksResponse, HttpStatus.OK);
+        List<LinkResponse> listLinksResponse = linkService.listAll(tgChatId)
+                .stream()
+                .map(linkDTO -> new LinkResponse(linkDTO.getId(), linkDTO.getUrl()))
+                .toList();
+        return new ResponseEntity<>(new ListLinksResponse(listLinksResponse, listLinksResponse.size()), HttpStatus.OK);
     }
 
     @PostMapping("/links")

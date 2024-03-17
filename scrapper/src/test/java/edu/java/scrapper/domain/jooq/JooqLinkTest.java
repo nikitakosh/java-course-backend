@@ -1,8 +1,7 @@
-package edu.java.scrapper.domain.jdbc;
+package edu.java.scrapper.domain.jooq;
 
-
-import edu.java.domain.jdbc.JdbcLinkRepository;
-import edu.java.domain.jdbc.models.Link;
+import edu.java.domain.jooq.repositories.JooqLinkRepository;
+import edu.java.domain.jooq.tables.pojos.Link;
 import edu.java.scrapper.IntegrationTest;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -15,11 +14,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-public class JdbcLinkTest extends IntegrationTest {
-    private final JdbcLinkRepository linkRepository;
+public class JooqLinkTest extends IntegrationTest {
+    private final JooqLinkRepository linkRepository;
 
     @Autowired
-    public JdbcLinkTest(JdbcLinkRepository linkRepository) {
+    public JooqLinkTest(JooqLinkRepository linkRepository) {
         this.linkRepository = linkRepository;
     }
 

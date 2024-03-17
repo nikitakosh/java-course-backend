@@ -1,6 +1,6 @@
 package edu.java.services;
 
-import edu.java.models.Link;
+import edu.java.services.dto.LinkDTO;
 import java.util.List;
 
 public interface TgChatService {
@@ -8,5 +8,5 @@ public interface TgChatService {
 
     void unregister(long tgChatId);
 
-    List<Long> findChatsByLink(Link link);
+    List<Long> findChatsByLink(LinkDTO link);
 }

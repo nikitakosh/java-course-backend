@@ -1,4 +1,4 @@
-package edu.java.models;
+package edu.java.domain.jdbc.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

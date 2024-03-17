@@ -1,7 +1,7 @@
-package edu.java.scrapper.domain.jdbc;
+package edu.java.scrapper.domain.jooq;
 
-import edu.java.domain.jdbc.JdbcTgChatRepository;
-import edu.java.domain.jdbc.models.Chat;
+import edu.java.domain.jooq.repositories.JooqTgChatRepository;
+import edu.java.domain.jooq.tables.pojos.Chat;
 import edu.java.scrapper.IntegrationTest;
 import java.util.List;
 import java.util.Optional;
@@ -13,11 +13,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-public class JdbcTgChatTest extends IntegrationTest {
-    private final JdbcTgChatRepository chatRepository;
+public class JooqTgChatTest extends IntegrationTest {
+    private final JooqTgChatRepository chatRepository;
 
     @Autowired
-    public JdbcTgChatTest(JdbcTgChatRepository chatRepository) {
+    public JooqTgChatTest(JooqTgChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
 

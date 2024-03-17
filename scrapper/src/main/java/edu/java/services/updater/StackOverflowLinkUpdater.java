@@ -5,27 +5,30 @@ import edu.java.clients.stackoverflow.StackOverflowClient;
 import edu.java.clients.stackoverflow.dto.AnswerItemResponse;
 import edu.java.clients.stackoverflow.dto.QuestionItemResponse;
 import edu.java.controllers.dto.LinkUpdate;
-import edu.java.models.Link;
 import edu.java.services.LinkService;
 import edu.java.services.TgChatService;
+import edu.java.services.dto.LinkDTO;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class StackOverflowLinkUpdater implements LinkUpdater {
+    @Qualifier("jdbcLinkService")
     private final LinkService linkService;
+    @Qualifier("jdbcTgChatService")
     private final TgChatService chatService;
     private final StackOverflowClient stackOverflowClient;
     private final BotClient botClient;
 
     @Override
-    public void update(Link link) {
+    public void update(LinkDTO link) {
         URI uri = URI.create(link.getUrl());
         String[] path = uri.getPath().split("/");
         QuestionItemResponse itemResponse = stackOverflowClient.fetchQuestion(path[2]);

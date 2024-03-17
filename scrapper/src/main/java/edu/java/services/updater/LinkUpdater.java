@@ -1,10 +1,10 @@
 package edu.java.services.updater;
 
-import edu.java.models.Link;
+import edu.java.services.dto.LinkDTO;
 import java.net.URI;
 
 public interface LinkUpdater {
-    void update(Link link);
+    void update(LinkDTO link);
 
     boolean supports(URI link);
 }

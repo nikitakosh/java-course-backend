@@ -1,7 +1,6 @@
 package edu.java.domain.jdbc;
 
-import edu.java.domain.LinkDao;
-import edu.java.models.Link;
+import edu.java.domain.jdbc.models.Link;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -12,25 +11,22 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class JdbcLinkDao implements LinkDao {
+public class JdbcLinkRepository {
     private final JdbcClient jdbcClient;
 
-    @Override
     public Integer add(Link link) {
-        return jdbcClient.sql("INSERT INTO link(url, updated_at, created_at) VALUES (?, ?, ?) RETURNING id")
-                .params(link.getUrl(), link.getUpdatedAt(), link.getCreatedAt())
+        return jdbcClient.sql("INSERT INTO link(url, created_at) VALUES (?, ?) RETURNING id")
+                .params(link.getUrl(), link.getCreatedAt())
                 .query(Integer.class)
                 .single();
     }
 
-    @Override
     public Integer remove(String url) {
         return jdbcClient.sql("DELETE FROM link WHERE url = ?")
                 .param(url)
                 .update();
     }
 
-    @Override
     public void update(Link link) {
         jdbcClient.sql(
                         """
@@ -56,7 +52,6 @@ public class JdbcLinkDao implements LinkDao {
     }
 
 
-    @Override
     public List<Link> findAll() {
         return jdbcClient.sql("SELECT * FROM link")
                 .query(Link.class)
@@ -64,7 +59,6 @@ public class JdbcLinkDao implements LinkDao {
     }
 
 
-    @Override
     public List<Link> findAllByChat(Long tgChatId) {
         return jdbcClient.sql(
                         """
@@ -78,7 +72,6 @@ public class JdbcLinkDao implements LinkDao {
                 .list();
     }
 
-    @Override
     public Optional<Link> find(String url) {
         return jdbcClient.sql("SELECT * FROM link WHERE link.url = ?")
                 .param(url)

@@ -1,6 +1,5 @@
 package edu.java.scrapper;
 
-import edu.java.domain.jdbc.JdbcLinkDao;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -22,9 +21,7 @@ import liquibase.exception.LiquibaseException;
 import liquibase.resource.DirectoryResourceAccessor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;

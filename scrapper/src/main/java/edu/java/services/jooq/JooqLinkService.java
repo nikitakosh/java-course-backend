@@ -1,11 +1,11 @@
-package edu.java.services.jdbc;
+package edu.java.services.jooq;
 
 import edu.java.controllers.dto.AddLinkRequest;
 import edu.java.controllers.dto.RemoveLinkRequest;
-import edu.java.domain.jdbc.JdbcChatLinkRepository;
-import edu.java.domain.jdbc.JdbcLinkRepository;
-import edu.java.domain.jdbc.JdbcTgChatRepository;
-import edu.java.domain.jdbc.models.Link;
+import edu.java.domain.jooq.repositories.JooqChatLinkRepository;
+import edu.java.domain.jooq.repositories.JooqLinkRepository;
+import edu.java.domain.jooq.repositories.JooqTgChatRepository;
+import edu.java.domain.jooq.tables.pojos.Link;
 import edu.java.exceptions.NotExistentChatException;
 import edu.java.exceptions.NotExistentLinkException;
 import edu.java.services.LinkService;
@@ -17,19 +17,18 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
+
 @RequiredArgsConstructor
 @Slf4j
-public class JdbcLinkService implements LinkService {
+@Service
+public class JooqLinkService implements LinkService {
     public static final String CHAT_IS_NOT_EXIST = "chat is not exist";
-    private final JdbcLinkRepository linkRepository;
-    private final JdbcTgChatRepository chatRepository;
-    private final JdbcChatLinkRepository chatLinkRepository;
+    private final JooqLinkRepository linkRepository;
+    private final JooqTgChatRepository chatRepository;
+    private final JooqChatLinkRepository chatLinkRepository;
 
     @Override
-    @Transactional
     public void add(long tgChatId, AddLinkRequest addLinkRequest) {
         String url = addLinkRequest.getLink();
         if (chatRepository.find(tgChatId).isEmpty()) {
@@ -51,7 +50,6 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
-    @Transactional
     public void remove(long tgChatId, RemoveLinkRequest removeLinkRequest) {
         String url = removeLinkRequest.getLink();
         if (chatRepository.find(tgChatId).isEmpty()) {
@@ -94,7 +92,7 @@ public class JdbcLinkService implements LinkService {
                         link.getUpdatedAt(),
                         link.getCreatedAt(),
                         link.getCommitMessage(),
-                        link.getCommitSHA(),
+                        link.getCommitSha(),
                         link.getAnswerId(),
                         link.getAnswerOwner()))
                 .toList();
@@ -112,7 +110,7 @@ public class JdbcLinkService implements LinkService {
                         link.getUpdatedAt(),
                         link.getCreatedAt(),
                         link.getCommitMessage(),
-                        link.getCommitSHA(),
+                        link.getCommitSha(),
                         link.getAnswerId(),
                         link.getAnswerOwner()))
                 .toList();

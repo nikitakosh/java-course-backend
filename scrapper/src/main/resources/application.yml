@@ -17,6 +17,8 @@ spring:
     driverClassName: org.postgresql.Driver
   liquibase:
     enabled: false
+  jooq:
+    sql-dialect: postgres
 
 server:
   port: 8080

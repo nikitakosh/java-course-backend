@@ -1,19 +1,18 @@
 package edu.java.services;
 
 import edu.java.controllers.dto.AddLinkRequest;
-import edu.java.controllers.dto.ListLinksResponse;
 import edu.java.controllers.dto.RemoveLinkRequest;
-import edu.java.models.Link;
+import edu.java.services.dto.LinkDTO;
 import java.util.List;
 
 public interface LinkService {
-    Link add(long tgChatId, AddLinkRequest addLinkRequest);
+    void add(long tgChatId, AddLinkRequest addLinkRequest);
 
-    Link remove(long tgChatId, RemoveLinkRequest removeLinkRequest);
+    void remove(long tgChatId, RemoveLinkRequest removeLinkRequest);
 
-    void update(Link link);
+    void update(LinkDTO link);
 
-    List<Link> findOldLinks(long secondsThreshold);
+    List<LinkDTO> findOldLinks(long secondsThreshold);
 
-    ListLinksResponse listAll(long tgChatId);
+    List<LinkDTO> listAll(long tgChatId);
 }

@@ -1,7 +1,8 @@
-package edu.java.services.jdbc;
+package edu.java.services.jooq;
 
-import edu.java.domain.jdbc.JdbcChatLinkRepository;
-import edu.java.domain.jdbc.JdbcTgChatRepository;
+
+import edu.java.domain.jooq.repositories.JooqChatLinkRepository;
+import edu.java.domain.jooq.repositories.JooqTgChatRepository;
 import edu.java.exceptions.ChatAlreadyExistException;
 import edu.java.services.TgChatService;
 import edu.java.services.dto.LinkDTO;
@@ -11,9 +12,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class JdbcTgChatService implements TgChatService {
-    private final JdbcTgChatRepository chatRepository;
-    private final JdbcChatLinkRepository chatLinkRepository;
+public class JooqTgChatService implements TgChatService {
+    private final JooqTgChatRepository chatRepository;
+    private final JooqChatLinkRepository chatLinkRepository;
 
     @Override
     public void register(long tgChatId) {
