@@ -39,7 +39,8 @@ public class JooqLinkService implements LinkService {
             Link link = new Link();
             link.setUrl(url);
             link.setCreatedAt(OffsetDateTime.now());
-            int linkId = linkRepository.add(link);
+            linkRepository.add(link);
+            int linkId = linkRepository.find(url).get().getId();
             log.info(String.valueOf(linkId));
             chatLinkRepository.add(linkId, tgChatId);
         } else {

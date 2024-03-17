@@ -11,21 +11,32 @@ import edu.java.services.dto.LinkDTO;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Objects;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class StackOverflowLinkUpdater implements LinkUpdater {
-    @Qualifier("jdbcLinkService")
+
     private final LinkService linkService;
-    @Qualifier("jdbcTgChatService")
+
     private final TgChatService chatService;
     private final StackOverflowClient stackOverflowClient;
     private final BotClient botClient;
+
+    @Autowired
+    public StackOverflowLinkUpdater(
+            @Qualifier("jooqLinkService") LinkService linkService,
+            @Qualifier("jooqTgChatService") TgChatService chatService,
+            StackOverflowClient stackOverflowClient, BotClient botClient
+    ) {
+        this.linkService = linkService;
+        this.chatService = chatService;
+        this.stackOverflowClient = stackOverflowClient;
+        this.botClient = botClient;
+    }
 
     @Override
     public void update(LinkDTO link) {
@@ -36,6 +47,7 @@ public class StackOverflowLinkUpdater implements LinkUpdater {
             AnswerItemResponse answerItemResponse = stackOverflowClient.fetchAnswer(path[2]);
             log.info(answerItemResponse.answerId().toString());
             log.info(answerItemResponse.owner().displayName());
+            log.info("time: " + itemResponse.lastActivityDate());
             link.setUpdatedAt(itemResponse.lastActivityDate());
             link.setCreatedAt(OffsetDateTime.now());
             boolean isNewAnswer = false;

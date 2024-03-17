@@ -31,10 +31,12 @@ public class JooqLinkRepository {
     public void update(Link link) {
         context.update(LINK)
                 .set(LINK.UPDATED_AT, link.getUpdatedAt())
+                .set(LINK.CREATED_AT, link.getCreatedAt())
                 .set(LINK.COMMIT_MESSAGE, link.getCommitMessage())
                 .set(LINK.COMMIT_SHA, link.getCommitSha())
                 .set(LINK.ANSWER_ID, link.getAnswerId())
                 .set(LINK.ANSWER_OWNER, link.getAnswerOwner())
+                .where(LINK.URL.eq(link.getUrl()))
                 .execute();
     }
 

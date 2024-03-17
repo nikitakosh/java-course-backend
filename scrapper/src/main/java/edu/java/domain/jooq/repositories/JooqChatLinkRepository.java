@@ -21,8 +21,14 @@ public class JooqChatLinkRepository {
                 .fetchOptionalInto(ChatLink.class);
     }
 
+    public void removeByChat(Long tgChatId) {
+        context.deleteFrom(CHAT_LINK)
+                .where(CHAT_LINK.CHAT_ID.eq(tgChatId))
+                .execute();
+    }
+
     public Integer remove(Long tgChatId, Link link) {
-        return context.delete(CHAT_LINK)
+        return context.deleteFrom(CHAT_LINK)
                 .where(CHAT_LINK.LINK_ID.eq(link.getId()))
                 .and(CHAT_LINK.CHAT_ID.eq(tgChatId))
                 .execute();

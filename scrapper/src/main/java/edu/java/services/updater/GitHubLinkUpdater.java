@@ -11,21 +11,31 @@ import edu.java.services.dto.LinkDTO;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Objects;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class GitHubLinkUpdater implements LinkUpdater {
-    @Qualifier("jdbcLinkService")
+
     private final LinkService linkService;
-    @Qualifier("jdbcTgChatService")
     private final TgChatService chatService;
     private final GitHubClient gitHubClient;
     private final BotClient botClient;
+
+    @Autowired
+    public GitHubLinkUpdater(
+            @Qualifier("jooqLinkService") LinkService linkService,
+            @Qualifier("jooqTgChatService") TgChatService chatService,
+            GitHubClient gitHubClient, BotClient botClient
+    ) {
+        this.linkService = linkService;
+        this.chatService = chatService;
+        this.gitHubClient = gitHubClient;
+        this.botClient = botClient;
+    }
 
     @Override
     public void update(LinkDTO link) {
@@ -34,8 +44,6 @@ public class GitHubLinkUpdater implements LinkUpdater {
         RepoResponse repoResponse = gitHubClient.fetchRepo(path[1], path[2]);
         if (link.getUpdatedAt() == null || repoResponse.updatedAt().isAfter(link.getUpdatedAt())) {
             CommitResponse commitResponse = gitHubClient.fetchCommit(path[1], path[2]);
-            log.info(commitResponse.sha());
-            log.info(commitResponse.commit().message());
             link.setUpdatedAt(repoResponse.updatedAt());
             link.setCreatedAt(OffsetDateTime.now());
             boolean isCommitUpdate = false;

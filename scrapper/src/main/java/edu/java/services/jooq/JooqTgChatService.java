@@ -29,6 +29,7 @@ public class JooqTgChatService implements TgChatService {
         if (chatRepository.find(tgChatId).isEmpty()) {
             throw new ChatAlreadyExistException("chat is not exist");
         }
+        chatLinkRepository.removeByChat(tgChatId);
         chatRepository.remove(tgChatId);
     }
 
