@@ -2,7 +2,9 @@ package edu.java.scrapper.services.jooq;
 
 import edu.java.controllers.dto.AddLinkRequest;
 import edu.java.controllers.dto.RemoveLinkRequest;
+import edu.java.domain.jooq.repositories.JooqChatLinkRepository;
 import edu.java.domain.jooq.repositories.JooqLinkRepository;
+import edu.java.domain.jooq.repositories.JooqTgChatRepository;
 import edu.java.domain.jooq.tables.pojos.Link;
 import edu.java.scrapper.IntegrationTest;
 import edu.java.services.dto.LinkDTO;
@@ -23,9 +25,9 @@ public class JooqLinkServiceTest extends IntegrationTest {
     private final JooqLinkRepository linkRepository;
 
     @Autowired
-    public JooqLinkServiceTest(JooqTgChatService chatService, JooqLinkService linkService, JooqLinkRepository linkRepository) {
-        this.chatService = chatService;
-        this.linkService = linkService;
+    public JooqLinkServiceTest(JooqLinkRepository linkRepository, JooqTgChatRepository chatRepository, JooqChatLinkRepository chatLinkRepository) {
+        this.chatService = new JooqTgChatService(chatRepository, chatLinkRepository);
+        this.linkService = new JooqLinkService(linkRepository, chatRepository, chatLinkRepository);
         this.linkRepository = linkRepository;
     }
 

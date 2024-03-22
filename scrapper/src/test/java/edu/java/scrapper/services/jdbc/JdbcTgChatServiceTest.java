@@ -1,6 +1,7 @@
 package edu.java.scrapper.services.jdbc;
 
 import edu.java.controllers.dto.AddLinkRequest;
+import edu.java.domain.jdbc.JdbcChatLinkRepository;
 import edu.java.domain.jdbc.JdbcLinkRepository;
 import edu.java.domain.jdbc.JdbcTgChatRepository;
 import edu.java.scrapper.IntegrationTest;
@@ -21,10 +22,10 @@ public class JdbcTgChatServiceTest extends IntegrationTest {
     private final JdbcLinkRepository linkRepository;
 
     @Autowired
-    public JdbcTgChatServiceTest(JdbcTgChatService chatService, JdbcTgChatRepository chatRepository, JdbcLinkService linkService, JdbcLinkRepository linkRepository) {
-        this.chatService = chatService;
+    public JdbcTgChatServiceTest(JdbcTgChatRepository chatRepository, JdbcLinkRepository linkRepository, JdbcChatLinkRepository chatLinkRepository) {
+        this.chatService = new JdbcTgChatService(chatRepository, chatLinkRepository);
         this.chatRepository = chatRepository;
-        this.linkService = linkService;
+        this.linkService = new JdbcLinkService(linkRepository, chatRepository, chatLinkRepository);
         this.linkRepository = linkRepository;
     }
 
