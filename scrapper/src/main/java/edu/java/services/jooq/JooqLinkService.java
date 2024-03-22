@@ -6,6 +6,7 @@ import edu.java.domain.jooq.repositories.JooqChatLinkRepository;
 import edu.java.domain.jooq.repositories.JooqLinkRepository;
 import edu.java.domain.jooq.repositories.JooqTgChatRepository;
 import edu.java.domain.jooq.tables.pojos.Link;
+import edu.java.exceptions.LinkWasNotTrackedException;
 import edu.java.exceptions.NotExistentChatException;
 import edu.java.exceptions.NotExistentLinkException;
 import edu.java.services.LinkService;
@@ -16,12 +17,11 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
 @Slf4j
-@Service
 public class JooqLinkService implements LinkService {
     public static final String CHAT_IS_NOT_EXIST = "chat is not exist";
     private final JooqLinkRepository linkRepository;
@@ -29,6 +29,7 @@ public class JooqLinkService implements LinkService {
     private final JooqChatLinkRepository chatLinkRepository;
 
     @Override
+    @Transactional
     public void add(long tgChatId, AddLinkRequest addLinkRequest) {
         String url = addLinkRequest.getLink();
         if (chatRepository.find(tgChatId).isEmpty()) {
@@ -51,6 +52,7 @@ public class JooqLinkService implements LinkService {
     }
 
     @Override
+    @Transactional
     public void remove(long tgChatId, RemoveLinkRequest removeLinkRequest) {
         String url = removeLinkRequest.getLink();
         if (chatRepository.find(tgChatId).isEmpty()) {
@@ -58,7 +60,10 @@ public class JooqLinkService implements LinkService {
         }
         Optional<Link> linkOptional = linkRepository.find(url);
         if (linkOptional.isEmpty()) {
-            throw new NotExistentLinkException("link is nox exist");
+            throw new NotExistentLinkException("link is not exist");
+        }
+        if (chatLinkRepository.find(tgChatId, linkOptional.get().getId()).isEmpty()) {
+            throw new LinkWasNotTrackedException("link was not tracked");
         }
         chatLinkRepository.remove(tgChatId, linkOptional.get());
         if (!chatLinkRepository.isLinkPresent(linkOptional.get().getId())) {
@@ -67,6 +72,7 @@ public class JooqLinkService implements LinkService {
     }
 
     @Override
+    @Transactional
     public void update(LinkDTO link) {
         linkRepository.update(new Link(link.getId(),
                 link.getUrl(),
@@ -79,6 +85,7 @@ public class JooqLinkService implements LinkService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<LinkDTO> findOldLinks(long secondsThreshold) {
         return linkRepository.findAll()
                 .stream()
@@ -100,6 +107,7 @@ public class JooqLinkService implements LinkService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<LinkDTO> listAll(long tgChatId) {
         if (chatRepository.find(tgChatId).isEmpty()) {
             throw new NotExistentChatException(CHAT_IS_NOT_EXIST);

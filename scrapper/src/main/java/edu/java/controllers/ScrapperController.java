@@ -7,8 +7,8 @@ import edu.java.controllers.dto.RemoveLinkRequest;
 import edu.java.services.LinkService;
 import edu.java.services.TgChatService;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,18 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class ScrapperController {
 
     private final TgChatService chatService;
     private final LinkService linkService;
-
-    public ScrapperController(
-            @Qualifier("jooqTgChatService") TgChatService chatService,
-            @Qualifier("jooqLinkService") LinkService linkService
-    ) {
-        this.chatService = chatService;
-        this.linkService = linkService;
-    }
 
     @PostMapping("/tg-chat/{id}")
     public ResponseEntity<Void> registerChat(

@@ -1,49 +1,25 @@
 package edu.java.scrapper.clients;
 
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.clients.github.GitHubClient;
 import edu.java.clients.github.GitHubClientImpl;
 import edu.java.clients.github.RepoResponse;
 import java.time.OffsetDateTime;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@SpringBootTest
+@WireMockTest(httpPort = 8080)
 public class GitHubClientTest {
-
-
-    private static WireMockServer wireMockServer;
-    private final WebClient.Builder webClientBuilder;
-
-    @Autowired
-    public GitHubClientTest(WebClient.Builder webClientBuilder) {
-        this.webClientBuilder = webClientBuilder;
-    }
-
-    @BeforeAll
-    public static void beforeAll() {
-        wireMockServer = new WireMockServer();
-        wireMockServer.start();
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        wireMockServer.stop();
-    }
 
     @Test
     public void fetchRepo() {
-        GitHubClient gitHubClient = new GitHubClientImpl(webClientBuilder, "http://localhost:8080");
+        GitHubClient gitHubClient = new GitHubClientImpl(WebClient.builder(), "http://localhost:8080");
         String owner = "nikitakosh";
         String repo = "TinkJavaCourse";
         stubFor(get(urlPathMatching(String.format("/repos/%s/%s", owner, repo)))

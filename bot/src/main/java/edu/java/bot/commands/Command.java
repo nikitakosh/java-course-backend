@@ -15,7 +15,7 @@ public interface Command {
 
     default boolean supports(Update update) {
         Pattern pattern = Pattern.compile("^%s$".formatted(command()));
-        Matcher matcher = pattern.matcher(update.message().text());
+        Matcher matcher = pattern.matcher(update.message().text().split(" ")[0]);
         return matcher.matches();
     }
 

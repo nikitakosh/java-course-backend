@@ -1,11 +1,11 @@
-package edu.java.services.jdbc;
+package edu.java.services.jpa;
 
 import edu.java.controllers.dto.AddLinkRequest;
 import edu.java.controllers.dto.RemoveLinkRequest;
-import edu.java.domain.jdbc.JdbcChatLinkRepository;
-import edu.java.domain.jdbc.JdbcLinkRepository;
-import edu.java.domain.jdbc.JdbcTgChatRepository;
-import edu.java.domain.jdbc.models.Link;
+import edu.java.domain.jpa.entity.ChatEntity;
+import edu.java.domain.jpa.entity.LinkEntity;
+import edu.java.domain.jpa.repositoires.JpaLinkRepository;
+import edu.java.domain.jpa.repositoires.JpaTgChatRepository;
 import edu.java.exceptions.LinkWasNotTrackedException;
 import edu.java.exceptions.NotExistentChatException;
 import edu.java.exceptions.NotExistentLinkException;
@@ -16,36 +16,33 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Slf4j
-public class JdbcLinkService implements LinkService {
+public class JpaLinkService implements LinkService {
     public static final String CHAT_IS_NOT_EXIST = "chat is not exist";
-    private final JdbcLinkRepository linkRepository;
-    private final JdbcTgChatRepository chatRepository;
-    private final JdbcChatLinkRepository chatLinkRepository;
+    public static final String LINK_IS_NOT_EXIST = "link is not exist";
+    private final JpaLinkRepository linkRepository;
+    private final JpaTgChatRepository chatRepository;
 
     @Override
     @Transactional
     public void add(long tgChatId, AddLinkRequest addLinkRequest) {
         String url = addLinkRequest.getLink();
-        if (chatRepository.find(tgChatId).isEmpty()) {
+        Optional<ChatEntity> chat = chatRepository.findById(tgChatId);
+        if (chat.isEmpty()) {
             throw new NotExistentChatException(CHAT_IS_NOT_EXIST);
         }
-        Optional<Link> linkOptional = linkRepository.find(url);
+        Optional<LinkEntity> linkOptional = linkRepository.findByUrl(url);
         if (linkOptional.isEmpty()) {
-            Link link = new Link();
+            LinkEntity link = new LinkEntity();
             link.setUrl(url);
             link.setCreatedAt(OffsetDateTime.now());
-            int linkId = linkRepository.add(link);
-            log.info(String.valueOf(linkId));
-            chatLinkRepository.add(linkId, tgChatId);
+            link.addChat(chat.get());
+            linkRepository.save(link);
         } else {
-            if (chatLinkRepository.find(tgChatId, linkOptional.get().getId()).isEmpty()) {
-                chatLinkRepository.add(linkOptional.get().getId(), tgChatId);
-            }
+            linkOptional.get().addChat(chat.get());
+            linkRepository.save(linkOptional.get());
         }
     }
 
@@ -53,33 +50,39 @@ public class JdbcLinkService implements LinkService {
     @Transactional
     public void remove(long tgChatId, RemoveLinkRequest removeLinkRequest) {
         String url = removeLinkRequest.getLink();
-        if (chatRepository.find(tgChatId).isEmpty()) {
+        Optional<ChatEntity> chat = chatRepository.findById(tgChatId);
+        if (chat.isEmpty()) {
             throw new NotExistentChatException(CHAT_IS_NOT_EXIST);
         }
-        Optional<Link> linkOptional = linkRepository.find(url);
+        Optional<LinkEntity> linkOptional = linkRepository.findByUrl(url);
         if (linkOptional.isEmpty()) {
-            throw new NotExistentLinkException("link is nox exist");
+            throw new NotExistentLinkException(LINK_IS_NOT_EXIST);
         }
-        if (chatLinkRepository.find(tgChatId, linkOptional.get().getId()).isEmpty()) {
+        if (!chat.get().getLinks().contains(linkOptional.get())) {
             throw new LinkWasNotTrackedException("link was not tracked");
         }
-        chatLinkRepository.remove(tgChatId, linkOptional.get());
-        if (!chatLinkRepository.isLinkPresent(linkOptional.get().getId())) {
-            linkRepository.remove(url);
+        linkOptional.get().removeChat(chat.get());
+        if (linkOptional.get().getChats().isEmpty()) {
+            linkRepository.delete(linkOptional.get());
+        } else {
+            linkRepository.save(linkOptional.get());
         }
     }
 
     @Override
     @Transactional
     public void update(LinkDTO link) {
-        linkRepository.update(new Link(link.getId(),
-                link.getUrl(),
-                link.getUpdatedAt(),
-                link.getCreatedAt(),
-                link.getCommitMessage(),
-                link.getCommitSHA(),
-                link.getAnswerId(),
-                link.getAnswerOwner()));
+        Optional<LinkEntity> optionalLink = linkRepository.findByUrl(link.getUrl());
+        if (optionalLink.isEmpty()) {
+            throw new NotExistentLinkException(LINK_IS_NOT_EXIST);
+        }
+        optionalLink.get().setUpdatedAt(link.getUpdatedAt());
+        optionalLink.get().setCreatedAt(link.getCreatedAt());
+        optionalLink.get().setCommitMessage(link.getCommitMessage());
+        optionalLink.get().setCommitSha(link.getCommitSHA());
+        optionalLink.get().setAnswerId(link.getAnswerId());
+        optionalLink.get().setAnswerOwner(link.getAnswerOwner());
+        linkRepository.save(optionalLink.get());
     }
 
     @Override
@@ -98,7 +101,7 @@ public class JdbcLinkService implements LinkService {
                         link.getUpdatedAt(),
                         link.getCreatedAt(),
                         link.getCommitMessage(),
-                        link.getCommitSHA(),
+                        link.getCommitSha(),
                         link.getAnswerId(),
                         link.getAnswerOwner()))
                 .toList();
@@ -107,17 +110,18 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional(readOnly = true)
     public List<LinkDTO> listAll(long tgChatId) {
-        if (chatRepository.find(tgChatId).isEmpty()) {
+        Optional<ChatEntity> chat = chatRepository.findById(tgChatId);
+        if (chat.isEmpty()) {
             throw new NotExistentChatException(CHAT_IS_NOT_EXIST);
         }
-        return linkRepository.findAllByChat(tgChatId).stream()
+        return chat.get().getLinks().stream()
                 .map(link -> new LinkDTO(
                         link.getId(),
                         link.getUrl(),
                         link.getUpdatedAt(),
                         link.getCreatedAt(),
                         link.getCommitMessage(),
-                        link.getCommitSHA(),
+                        link.getCommitSha(),
                         link.getAnswerId(),
                         link.getAnswerOwner()))
                 .toList();

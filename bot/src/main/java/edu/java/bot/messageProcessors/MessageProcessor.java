@@ -27,7 +27,6 @@ public class MessageProcessor implements UserMessageProcessor {
                 .filter(cmd -> cmd.supports(update))
                 .findFirst()
                 .orElse(null);
-
         if (command == null) {
             return new SendMessage(
                     update.message().chat().id(),

@@ -7,6 +7,7 @@ import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.response.BaseResponse;
 import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.messageProcessors.UserMessageProcessor;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ public class ChangeTrackerBot implements Bot {
     }
 
     @Override
+    @PostConstruct
     public void start() {
         bot = new TelegramBot(config.telegramToken());
         bot.setUpdatesListener(this);
@@ -46,6 +48,7 @@ public class ChangeTrackerBot implements Bot {
     @PreDestroy
     public void close() {
         bot.removeGetUpdatesListener();
+        bot.shutdown();
     }
 
 }

@@ -4,6 +4,7 @@ app:
     interval: 10s
     force-check-delay: 10s
     seconds-threshold: 60
+  database-access-type: jpa
 springdoc:
   swagger-ui:
     path: /swagger-ui
@@ -25,3 +26,6 @@ server:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+
+

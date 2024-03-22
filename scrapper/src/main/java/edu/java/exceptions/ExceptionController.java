@@ -27,9 +27,33 @@ public class ExceptionController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
+    public ApiErrorResponse handleNotExistentChatException(NotExistentLinkException ex) {
+        return new ApiErrorResponse(
+                "link does not exist",
+                HttpStatus.BAD_REQUEST.toString(),
+                "NotExistentLinkException",
+                ex.getMessage(),
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ApiErrorResponse handleNotExistentChatException(LinkWasNotTrackedException ex) {
+        return new ApiErrorResponse(
+                "link was not tracked",
+                HttpStatus.BAD_REQUEST.toString(),
+                "LinkWasNotTrackedException",
+                ex.getMessage(),
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
     public ApiErrorResponse handleChatAlreadyExistException(ChatAlreadyExistException ex) {
         return new ApiErrorResponse(
-                "chat already exist",
+                "chat is already exist",
                 HttpStatus.BAD_REQUEST.toString(),
                 "ChatAlreadyExistException",
                 ex.getMessage(),
@@ -80,18 +104,6 @@ public class ExceptionController {
                 "link already tracked",
                 HttpStatus.BAD_REQUEST.toString(),
                 "LinkAlreadyTrackException",
-                ex.getMessage(),
-                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
-        );
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public ApiErrorResponse handleLinkWasNotTrackedException(LinkWasNotTrackedException ex) {
-        return new ApiErrorResponse(
-                "link was not tracked",
-                HttpStatus.BAD_REQUEST.toString(),
-                "LinkWasNotTrackedException",
                 ex.getMessage(),
                 Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
         );

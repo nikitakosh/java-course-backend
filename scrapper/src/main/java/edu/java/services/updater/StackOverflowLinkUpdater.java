@@ -11,13 +11,13 @@ import edu.java.services.dto.LinkDTO;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class StackOverflowLinkUpdater implements LinkUpdater {
 
     private final LinkService linkService;
@@ -26,17 +26,6 @@ public class StackOverflowLinkUpdater implements LinkUpdater {
     private final StackOverflowClient stackOverflowClient;
     private final BotClient botClient;
 
-    @Autowired
-    public StackOverflowLinkUpdater(
-            @Qualifier("jooqLinkService") LinkService linkService,
-            @Qualifier("jooqTgChatService") TgChatService chatService,
-            StackOverflowClient stackOverflowClient, BotClient botClient
-    ) {
-        this.linkService = linkService;
-        this.chatService = chatService;
-        this.stackOverflowClient = stackOverflowClient;
-        this.botClient = botClient;
-    }
 
     @Override
     public void update(LinkDTO link) {
@@ -60,7 +49,7 @@ public class StackOverflowLinkUpdater implements LinkUpdater {
             botClient.sendMessage(
                     new LinkUpdate(
                             link.getUrl(),
-                            String.format("link: %s is updated", link.getUrl()),
+                            "link: %s is updated".formatted(link.getUrl()),
                             chatService.findChatsByLink(link),
                             isNewAnswer,
                             "Add new answer by %s".formatted(link.getAnswerOwner())

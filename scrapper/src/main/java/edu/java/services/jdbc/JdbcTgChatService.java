@@ -7,9 +7,7 @@ import edu.java.services.TgChatService;
 import edu.java.services.dto.LinkDTO;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class JdbcTgChatService implements TgChatService {
     private final JdbcTgChatRepository chatRepository;
