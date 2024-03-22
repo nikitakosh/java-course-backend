@@ -22,10 +22,10 @@ public class JpaTgChatServiceTest extends IntegrationTest {
     private final JpaLinkRepository linkRepository;
 
     @Autowired
-    public JpaTgChatServiceTest(JpaTgChatRepository chatRepository, JpaTgChatService chatService, JpaLinkService linkService, JpaLinkRepository linkRepository) {
+    public JpaTgChatServiceTest(JpaTgChatRepository chatRepository, JpaLinkRepository linkRepository) {
+        this.chatService = new JpaTgChatService(linkRepository, chatRepository);
+        this.linkService = new JpaLinkService(linkRepository, chatRepository);
         this.chatRepository = chatRepository;
-        this.chatService = chatService;
-        this.linkService = linkService;
         this.linkRepository = linkRepository;
     }
 
