@@ -1,19 +1,13 @@
 app:
   telegram-token: ${TELEGRAM-TOKEN}
-
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 spring:
   application:
     name: bot
   jackson:
     time-zone: UTC
-  datasource:
-    url: jdbc:postgresql://localhost:5432/ChangeTracker
-    username: postgres
-    password: admin
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
 server:
   port: 8090
 
