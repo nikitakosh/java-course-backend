@@ -1,5 +1,12 @@
 app:
   telegram-token: ${TELEGRAM-TOKEN}
+  clients:
+    - scrapperClientConfig:
+        baseUrl: ${BASE_URL:http://localhost:8080}
+        attempts: ${ATTEMPTS:2}
+        duration: ${DURATION:5s}
+        back-off-strategy: ${BACK-OFF-STRATEGY:constant}
+
 springdoc:
   swagger-ui:
     path: /swagger-ui

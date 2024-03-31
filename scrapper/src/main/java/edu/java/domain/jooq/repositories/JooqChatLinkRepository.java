@@ -1,5 +1,6 @@
 package edu.java.domain.jooq.repositories;
 
+import static edu.java.domain.jooq.Tables.CHAT_LINK;
 import edu.java.domain.jooq.tables.pojos.ChatLink;
 import edu.java.domain.jooq.tables.pojos.Link;
 import java.util.List;
@@ -7,7 +8,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
-import static edu.java.domain.jooq.Tables.CHAT_LINK;
 
 @Service
 @RequiredArgsConstructor

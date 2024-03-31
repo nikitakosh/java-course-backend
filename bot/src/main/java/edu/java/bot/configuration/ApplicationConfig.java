@@ -10,4 +10,5 @@ public record ApplicationConfig(
         @NotEmpty
         String telegramToken
 ) {
+
 }
