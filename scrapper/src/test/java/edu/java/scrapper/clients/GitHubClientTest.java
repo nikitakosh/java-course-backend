@@ -9,7 +9,10 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.clients.github.GitHubClient;
 import edu.java.clients.github.GitHubClientImpl;
 import edu.java.clients.github.RepoResponse;
+import edu.java.configuration.clients.GitHubClientConfiguration;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,7 +22,14 @@ public class GitHubClientTest {
 
     @Test
     public void fetchRepo() {
-        GitHubClient gitHubClient = new GitHubClientImpl(WebClient.builder(), "http://localhost:8080");
+        GitHubClientConfiguration clientConfiguration = new GitHubClientConfiguration(
+                "http://localhost:8080",
+                2,
+                Duration.ofSeconds(2),
+                "constant",
+                List.of(404)
+        );
+        GitHubClient gitHubClient = new GitHubClientImpl(clientConfiguration, WebClient.builder());
         String owner = "nikitakosh";
         String repo = "TinkJavaCourse";
         stubFor(get(urlPathMatching(String.format("/repos/%s/%s", owner, repo)))

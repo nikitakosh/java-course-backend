@@ -5,6 +5,8 @@ import edu.java.controllers.ScrapperController;
 import edu.java.services.dto.LinkDTO;
 import edu.java.services.jpa.JpaLinkService;
 import edu.java.services.jpa.JpaTgChatService;
+import edu.java.utils.BucketGrabber;
+import io.github.bucket4j.Bucket;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
@@ -22,6 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ScrapperController.class)
 public class ScrapperControllerTest {
+    @MockBean
+    BucketGrabber bucketGrabber;
     @Autowired
     private MockMvc mvc;
     @MockBean
@@ -29,12 +33,15 @@ public class ScrapperControllerTest {
     @MockBean
     private JpaTgChatService chatService;
 
-
     @SneakyThrows
     @Test
     public void registerChatTest() {
         Mockito.doNothing().when(chatService).register(Mockito.anyLong());
-        mvc.perform(post("/tg-chat/{id}", Mockito.anyLong()))
+        Bucket bucket = Mockito.mock(Bucket.class);
+        Mockito.when(bucketGrabber.grabBucket(Mockito.anyString())).thenReturn(bucket);
+        Mockito.when(bucket.tryConsume(Mockito.anyLong())).thenReturn(true);
+        mvc.perform(post("/tg-chat/{id}", Mockito.anyLong())
+                        .header("X-Forwarded-For", "0.0.0.0"))
                 .andExpect(status().isOk());
     }
 
@@ -42,7 +49,11 @@ public class ScrapperControllerTest {
     @Test
     public void unregisterChatTest() {
         Mockito.doNothing().when(chatService).unregister(Mockito.anyLong());
-        mvc.perform(delete("/tg-chat/{id}", Mockito.anyLong()))
+        Bucket bucket = Mockito.mock(Bucket.class);
+        Mockito.when(bucketGrabber.grabBucket(Mockito.anyString())).thenReturn(bucket);
+        Mockito.when(bucket.tryConsume(Mockito.anyLong())).thenReturn(true);
+        mvc.perform(delete("/tg-chat/{id}", Mockito.anyLong())
+                        .header("X-Forwarded-For", "0.0.0.0"))
                 .andExpect(status().isOk());
     }
 
@@ -56,7 +67,12 @@ public class ScrapperControllerTest {
         link2.setId(2);
         link2.setUrl("https://example2.com");
         Mockito.when(linkService.listAll(Mockito.anyLong())).thenReturn(List.of(link1, link2));
-        mvc.perform(get("/links").header("Tg-Chat-Id", Mockito.anyLong()))
+        Bucket bucket = Mockito.mock(Bucket.class);
+        Mockito.when(bucketGrabber.grabBucket(Mockito.anyString())).thenReturn(bucket);
+        Mockito.when(bucket.tryConsume(Mockito.anyLong())).thenReturn(true);
+        mvc.perform(get("/links")
+                        .header("X-Forwarded-For", "0.0.0.0")
+                        .header("Tg-Chat-Id", Mockito.anyLong()))
                 .andExpect(status().isOk())
                 .andExpect(result -> Assertions.assertEquals(
                         result.getResponse().getContentAsString(),
@@ -68,8 +84,12 @@ public class ScrapperControllerTest {
     @Test
     public void addLinkTest() {
         Mockito.doNothing().when(linkService).add(Mockito.anyLong(), Mockito.any());
+        Bucket bucket = Mockito.mock(Bucket.class);
+        Mockito.when(bucketGrabber.grabBucket(Mockito.anyString())).thenReturn(bucket);
+        Mockito.when(bucket.tryConsume(Mockito.anyLong())).thenReturn(true);
         mvc.perform(post("/links")
                         .header("Tg-Chat-Id", 1L)
+                        .header("X-Forwarded-For", "0.0.0.0")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -82,8 +102,12 @@ public class ScrapperControllerTest {
     @Test
     public void deleteLinkTest() {
         Mockito.doNothing().when(linkService).remove(Mockito.anyLong(), Mockito.any());
+        Bucket bucket = Mockito.mock(Bucket.class);
+        Mockito.when(bucketGrabber.grabBucket(Mockito.anyString())).thenReturn(bucket);
+        Mockito.when(bucket.tryConsume(Mockito.anyLong())).thenReturn(true);
         mvc.perform(delete("/links")
                         .header("Tg-Chat-Id", 1L)
+                        .header("X-Forwarded-For", "0.0.0.0")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

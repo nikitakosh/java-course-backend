@@ -80,9 +80,9 @@ public class ScrapperController {
                     .toList();
             return new ResponseEntity<>(
                     new ListLinksResponse(
-                        listLinksResponse,
-                        listLinksResponse.size()),
-                        HttpStatus.OK
+                            listLinksResponse,
+                            listLinksResponse.size()),
+                    HttpStatus.OK
             );
         }
         throw new TooManyRequestsException(TOO_MANY_REQUESTS);

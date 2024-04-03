@@ -7,7 +7,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.clients.stackoverflow.StackOverflowClientImpl;
 import edu.java.clients.stackoverflow.dto.QuestionItemResponse;
+import edu.java.configuration.clients.StackOverflowClientConfiguration;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,7 +21,14 @@ public class StackOverflowClientTest {
 
     @Test
     public void fetchQuestion() {
-        StackOverflowClientImpl stackOverflowClient = new StackOverflowClientImpl(WebClient.builder(), "http://localhost:8080");
+        StackOverflowClientConfiguration clientConfiguration = new StackOverflowClientConfiguration(
+                "http://localhost:8080",
+                2,
+                Duration.ofSeconds(2),
+                "constant",
+                List.of(404)
+        );
+        StackOverflowClientImpl stackOverflowClient = new StackOverflowClientImpl(clientConfiguration, WebClient.builder());
         String id = "214741";
         stubFor(get(urlPathMatching(String.format("/questions/%s", id)))
                 .willReturn(aResponse()

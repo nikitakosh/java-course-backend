@@ -1,6 +1,8 @@
 package edu.java.bot.controllers;
 
 import edu.java.bot.sender.MessageSender;
+import edu.java.bot.utils.BucketGrabber;
+import io.github.bucket4j.Bucket;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,6 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(BotController.class)
 public class BotControllerTest {
+    @MockBean
+    BucketGrabber bucketGrabber;
     @Autowired
     private MockMvc mvc;
     @MockBean
@@ -23,7 +27,11 @@ public class BotControllerTest {
     @Test
     public void sendMessageTest() {
         Mockito.doNothing().when(sender).send(Mockito.anyList(), Mockito.anyString());
+        Bucket bucket = Mockito.mock(Bucket.class);
+        Mockito.when(bucketGrabber.grabBucket(Mockito.anyString())).thenReturn(bucket);
+        Mockito.when(bucket.tryConsume(Mockito.anyLong())).thenReturn(true);
         mvc.perform(post("/updates")
+                        .header("X-Forwarded-For", "0.0.0.0")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
