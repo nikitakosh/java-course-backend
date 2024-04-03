@@ -1,20 +1,26 @@
 package edu.java.clients.client;
 
 
+import edu.java.configuration.clients.BotClientConfiguration;
 import edu.java.controllers.dto.LinkUpdate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
 public class BotClientImpl implements BotClient {
-    public static final String BASE_URL = "http://localhost:8090";
     private final WebClient webClient;
+    private final BotClientConfiguration clientConfiguration;
 
-    public BotClientImpl(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl(BASE_URL).build();
+    public BotClientImpl(BotClientConfiguration clientConfiguration, WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.baseUrl(clientConfiguration.baseUrl()).build();
+        this.clientConfiguration = clientConfiguration;
     }
 
-    public BotClientImpl(WebClient.Builder webClientBuilder, String baseUrl) {
+    public BotClientImpl(BotClientConfiguration clientConfiguration,
+                         WebClient.Builder webClientBuilder,
+                         String baseUrl
+    ) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
+        this.clientConfiguration = clientConfiguration;
     }
 
     @Override
@@ -24,6 +30,7 @@ public class BotClientImpl implements BotClient {
                 .bodyValue(linkUpdate)
                 .retrieve()
                 .bodyToMono(LinkUpdate.class)
+                .retryWhen(clientConfiguration.getRetry())
                 .block();
     }
 }

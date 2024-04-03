@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class ClientCreator {
     private final WebClient.Builder webClientBuilder;
-    private final ClientConfiguration.ScrapperClientConfig scrapperClientConfig;
+    private final ScrapperClientConfiguration scrapperClientConfig;
 
     @Bean
     public ScrapperClient scrapperClient() {

@@ -5,6 +5,30 @@ app:
     force-check-delay: 10s
     seconds-threshold: 60
   database-access-type: jpa
+
+
+clients:
+  github-client-config:
+    baseUrl: ${BASE_URL:http://localhost:8080}
+    attempts: ${ATTEMPTS:2}
+    duration: ${DURATION:5s}
+    retry-policy: ${BACK-OFF-STRATEGY:constant} # values: constant, linear, exponential
+    retry-codes:
+      - 404
+  stackoverflow-client-config:
+    baseUrl: ${BASE_URL:http://localhost:8080}
+    attempts: ${ATTEMPTS:2}
+    duration: ${DURATION:5s}
+    retry-policy: ${BACK-OFF-STRATEGY:constant} # values: constant, linear, exponential
+    retry-codes:
+      - 404
+  bot-client-config:
+    baseUrl: ${BASE_URL:http://localhost:8080}
+    attempts: ${ATTEMPTS:2}
+    duration: ${DURATION:5s}
+    retry-policy: ${BACK-OFF-STRATEGY:constant} # values: constant, linear, exponential
+    retry-codes:
+      - 404
 springdoc:
   swagger-ui:
     path: /swagger-ui
@@ -20,6 +44,15 @@ spring:
     enabled: false
   jooq:
     sql-dialect: postgres
+
+bucket:
+  refill-size: 5
+  refill-interval: 1 #minutes
+  capacity: 5
+
+bucket-cache:
+  max-size: 100
+  expiration-time: 10 #minutes
 
 server:
   port: 8080

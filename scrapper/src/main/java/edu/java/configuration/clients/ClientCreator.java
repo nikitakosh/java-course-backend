@@ -1,4 +1,4 @@
-package edu.java.configuration;
+package edu.java.configuration.clients;
 
 import edu.java.clients.client.BotClient;
 import edu.java.clients.client.BotClientImpl;
@@ -13,22 +13,25 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @RequiredArgsConstructor
-public class ClientConfiguration {
+public class ClientCreator {
 
     private final WebClient.Builder webClientBuilder;
+    private final BotClientConfiguration botClientConfiguration;
+    private final GitHubClientConfiguration gitHubClientConfiguration;
+    private final StackOverflowClientConfiguration stackOverflowClientConfiguration;
 
     @Bean
     public BotClient botClient() {
-        return new BotClientImpl(webClientBuilder);
+        return new BotClientImpl(botClientConfiguration, webClientBuilder);
     }
 
     @Bean
     public GitHubClient gitHubClient() {
-        return new GitHubClientImpl(webClientBuilder);
+        return new GitHubClientImpl(gitHubClientConfiguration, webClientBuilder);
     }
 
     @Bean
     public StackOverflowClient stackOverflowClient() {
-        return new StackOverflowClientImpl(webClientBuilder);
+        return new StackOverflowClientImpl(stackOverflowClientConfiguration, webClientBuilder);
     }
 }

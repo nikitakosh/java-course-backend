@@ -4,6 +4,7 @@ import edu.java.clients.stackoverflow.dto.AnswerItemResponse;
 import edu.java.clients.stackoverflow.dto.AnswerResponse;
 import edu.java.clients.stackoverflow.dto.QuestionItemResponse;
 import edu.java.clients.stackoverflow.dto.QuestionResponse;
+import edu.java.configuration.clients.StackOverflowClientConfiguration;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -11,19 +12,28 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 public class StackOverflowClientImpl implements StackOverflowClient {
 
-    public static final String BASE_URL = "https://api.stackexchange.com";
     private final WebClient webClient;
+    private final StackOverflowClientConfiguration clientConfiguration;
 
-    public StackOverflowClientImpl(WebClient.Builder webClientBuilder) {
+    public StackOverflowClientImpl(
+            StackOverflowClientConfiguration clientConfiguration,
+            WebClient.Builder webClientBuilder
+    ) {
         this.webClient = webClientBuilder
-                .baseUrl(BASE_URL)
+                .baseUrl(clientConfiguration.baseUrl())
                 .build();
+        this.clientConfiguration = clientConfiguration;
     }
 
-    public StackOverflowClientImpl(WebClient.Builder webClientBuilder, String baseUrl) {
+    public StackOverflowClientImpl(
+            StackOverflowClientConfiguration clientConfiguration,
+            WebClient.Builder webClientBuilder,
+            String baseUrl
+    ) {
         this.webClient = webClientBuilder
                 .baseUrl(baseUrl)
                 .build();
+        this.clientConfiguration = clientConfiguration;
     }
 
     @Override
@@ -32,6 +42,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
                         .uri("/questions/{id}?site=stackoverflow", id)
                         .retrieve()
                         .bodyToMono(QuestionResponse.class)
+                        .retryWhen(clientConfiguration.getRetry())
                         .block())
                 .items()
                 .getFirst();
@@ -43,6 +54,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
                 .uri("/questions/{id}/answers?order=desc&sort=creation&site=stackoverflow", id)
                 .retrieve()
                 .bodyToMono(AnswerResponse.class)
+                .retryWhen(clientConfiguration.getRetry())
                 .block()
                 .items()
                 .getFirst();

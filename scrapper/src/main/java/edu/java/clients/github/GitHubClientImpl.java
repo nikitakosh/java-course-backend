@@ -1,18 +1,24 @@
 package edu.java.clients.github;
 
+import edu.java.configuration.clients.GitHubClientConfiguration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 public class GitHubClientImpl implements GitHubClient {
 
-    public static final String BASE_URL = "https://api.github.com";
     private final WebClient webClient;
+    private final GitHubClientConfiguration clientConfiguration;
 
-    public GitHubClientImpl(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl(BASE_URL).build();
+    public GitHubClientImpl(GitHubClientConfiguration clientConfiguration, WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.baseUrl(clientConfiguration.baseUrl()).build();
+        this.clientConfiguration = clientConfiguration;
     }
 
-    public GitHubClientImpl(WebClient.Builder webClientBuilder, String baseUrl) {
+    public GitHubClientImpl(GitHubClientConfiguration clientConfiguration,
+                            WebClient.Builder webClientBuilder,
+                            String baseUrl
+    ) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
+        this.clientConfiguration = clientConfiguration;
     }
 
 
@@ -22,6 +28,7 @@ public class GitHubClientImpl implements GitHubClient {
                 .uri("/repos/{owner}/{repo}", owner, repo)
                 .retrieve()
                 .bodyToMono(RepoResponse.class)
+                .retryWhen(clientConfiguration.getRetry())
                 .block();
     }
 
@@ -31,6 +38,7 @@ public class GitHubClientImpl implements GitHubClient {
                 .uri("/repos/{owner}/{repo}/commits", owner, repo)
                 .retrieve()
                 .toEntityList(CommitResponse.class)
+                .retryWhen(clientConfiguration.getRetry())
                 .block()
                 .getBody()
                 .getFirst();
