@@ -1,5 +1,6 @@
 app:
   telegram-token: ${TELEGRAM-TOKEN}
+  scrapper-topic-name: link-updates
 
 scrapper-client-config:
   baseUrl: ${BASE_URL:http://localhost:8080}
@@ -9,7 +10,23 @@ scrapper-client-config:
   retry-codes:
     - 404
 
-
+kafka:
+  consumer:
+    bootstrapServers: localhost:9092
+    groupId: link-tracker
+    autoOffsetReset: latest
+    maxPollIntervalMs: 300_000
+    enableAutoCommit: false
+    concurrency: 1
+  producer:
+    bootstrapServers: localhost:9092
+    clientId: todolist-backend
+    acksMode: all
+    deliveryTimeout: 60s
+    lingerMs: 12_000
+    batchSize: 100_000
+    maxInFlightPerConnection: 5
+    enableIdempotence: true # to handle specific retry errors
 bucket:
   refill-size: 5
   refill-interval: 1 #minutes

@@ -1,11 +1,11 @@
 package edu.java.services.updater;
 
-import edu.java.clients.client.BotClient;
 import edu.java.clients.github.CommitResponse;
 import edu.java.clients.github.GitHubClient;
 import edu.java.clients.github.RepoResponse;
 import edu.java.controllers.dto.LinkUpdate;
 import edu.java.services.LinkService;
+import edu.java.services.SenderService;
 import edu.java.services.TgChatService;
 import edu.java.services.dto.LinkDTO;
 import java.net.URI;
@@ -23,7 +23,8 @@ public class GitHubLinkUpdater implements LinkUpdater {
     private final LinkService linkService;
     private final TgChatService chatService;
     private final GitHubClient gitHubClient;
-    private final BotClient botClient;
+    private final SenderService senderService;
+
 
     @Override
     public void update(LinkDTO link) {
@@ -42,7 +43,7 @@ public class GitHubLinkUpdater implements LinkUpdater {
                 isCommitUpdate = true;
             }
             linkService.update(link);
-            botClient.sendMessage(
+            senderService.send(
                     new LinkUpdate(
                             link.getUrl(),
                             "link: %s is updated".formatted(link.getUrl()),

@@ -1,11 +1,11 @@
 package edu.java.services.updater;
 
-import edu.java.clients.client.BotClient;
 import edu.java.clients.stackoverflow.StackOverflowClient;
 import edu.java.clients.stackoverflow.dto.AnswerItemResponse;
 import edu.java.clients.stackoverflow.dto.QuestionItemResponse;
 import edu.java.controllers.dto.LinkUpdate;
 import edu.java.services.LinkService;
+import edu.java.services.SenderService;
 import edu.java.services.TgChatService;
 import edu.java.services.dto.LinkDTO;
 import java.net.URI;
@@ -24,7 +24,7 @@ public class StackOverflowLinkUpdater implements LinkUpdater {
 
     private final TgChatService chatService;
     private final StackOverflowClient stackOverflowClient;
-    private final BotClient botClient;
+    private final SenderService senderService;
 
 
     @Override
@@ -46,7 +46,7 @@ public class StackOverflowLinkUpdater implements LinkUpdater {
                 isNewAnswer = true;
             }
             linkService.update(link);
-            botClient.sendMessage(
+            senderService.send(
                     new LinkUpdate(
                             link.getUrl(),
                             "link: %s is updated".formatted(link.getUrl()),
