@@ -14,28 +14,28 @@ import static edu.java.domain.jooq.Tables.CHAT;
 @Slf4j
 public class JooqTgChatRepository {
 
-    private final DSLContext context;
+    private final DSLContext dslContext;
 
     public Integer add(Long tgChatId) {
 
-        return context.insertInto(CHAT)
+        return dslContext.insertInto(CHAT)
                 .set(CHAT.ID, tgChatId)
                 .execute();
     }
 
     public Integer remove(Long tgChatId) {
-        return context.delete(CHAT)
+        return dslContext.delete(CHAT)
                 .where(CHAT.ID.eq(tgChatId))
                 .execute();
     }
 
     public List<Chat> findAll() {
-        return context.selectFrom(CHAT)
+        return dslContext.selectFrom(CHAT)
                 .fetchInto(Chat.class);
     }
 
     public Optional<Chat> find(Long tgChatId) {
-        return context.selectFrom(CHAT)
+        return dslContext.selectFrom(CHAT)
                 .where(CHAT.ID.eq(tgChatId))
                 .fetchOptionalInto(Chat.class);
     }
