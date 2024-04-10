@@ -3,6 +3,7 @@ package edu.java.configuration.kafka;
 import edu.java.controllers.dto.LinkUpdate;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,11 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 
 @Configuration
 public class KafkaProducerConfig {
+
+    @Bean
+    public NewTopic linkUpdates() {
+        return new NewTopic("link-updates", 1, (short) 1);
+    }
 
     @Bean
     public ProducerFactory<String, LinkUpdate> producerFactory(KafkaProducerProperties kafkaProducerProperties) {

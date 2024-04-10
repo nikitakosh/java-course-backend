@@ -23,7 +23,7 @@ kafka:
     clientId: todolist-backend
     acksMode: all
     deliveryTimeout: 60s
-    lingerMs: 12_000
+    lingerMs: 1_000
     batchSize: 100_000
     maxInFlightPerConnection: 5
     enableIdempotence: true # to handle specific retry errors
