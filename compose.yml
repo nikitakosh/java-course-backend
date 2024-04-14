@@ -64,9 +64,30 @@ services:
       - zoo1
     volumes:
       - kafkaData:/etc/kafka/kafka_config_jaas.conf
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus_storage:/etc/prometheus/
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - backend
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_storage:/var/lib/grafana
+    networks:
+      - backend
 volumes:
   postgresql: { }
   kafkaData: { }
+  grafana_storage: { }
+  prometheus_storage: { }
 
 networks:
   backend: { }

@@ -3,6 +3,7 @@ package edu.java.bot.messageProcessors;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.commands.Command;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class MessageProcessor implements UserMessageProcessor {
     private final List<Command> commands;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public List<? extends Command> commands() {
@@ -21,6 +23,7 @@ public class MessageProcessor implements UserMessageProcessor {
 
     @Override
     public SendMessage process(Update update) {
+        meterRegistry.counter("processed_messages_total").increment();
         log.info(update.message().text());
         Command command = commands()
                 .stream()
